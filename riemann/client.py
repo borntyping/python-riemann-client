@@ -5,8 +5,7 @@ from __future__ import absolute_import, unicode_literals
 import abc
 import socket
 
-import supermann.riemann.riemann_pb2
-import supermann.utils
+import riemann.riemann_pb2
 
 
 class Client(object):
@@ -15,8 +14,6 @@ class Client(object):
     __metaclass__ = abc.ABCMeta
 
     def __init__(self, host, port=5555):
-        self.log = supermann.utils.getLogger(self)
-        self.log.info("Sending messages to Riemann at %s:%s", host, port)
         self.host = host
         self.port = port
         self.create_next_message()
@@ -42,7 +39,7 @@ class Client(object):
 
     def create_next_message(self):
         """Creates a Msg object to act as a queue"""
-        self.next = supermann.riemann.riemann_pb2.Msg()
+        self.next = riemann.riemann_pb2.Msg()
 
     def queue_events(self, *events):
         """Adds events to the next message"""
@@ -50,14 +47,12 @@ class Client(object):
 
     def send_next_message(self):
         """Sends the waiting message to Riemann"""
-        self.log.debug("Sending message with {n} events to Riemann".format(
-            n=len(self.next.events)))
         self.write(self.next)
         self.create_next_message()
 
     def event(self, service, **data):
         """Creates an event and adds it to the next message"""
-        event = supermann.riemann.riemann_pb2.Event()
+        event = riemann.riemann_pb2.Event()
         event.service = service
         event.tags.append('supermann')
         event.tags.extend(data.pop('tags', list()))

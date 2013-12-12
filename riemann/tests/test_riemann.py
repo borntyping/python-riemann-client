@@ -4,15 +4,15 @@ import StringIO
 
 import py.test
 
-import supermann.riemann.client
+import riemann.client
 
 
 def test_abstract_client():
     with py.test.raises(TypeError):
-        supermann.riemann.client.Client()
+        riemann.client.Client()
 
 
-class Client(supermann.riemann.client.Client):
+class Client(riemann.client.Client):
     def connect(self):
         self.string = StringIO.StringIO()
 

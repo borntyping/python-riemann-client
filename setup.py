@@ -7,7 +7,7 @@ import sys
 
 setuptools.setup(
     name = "riemann-client",
-    version = '0.0.0',
+    version = '0.1.0',
 
     author = "Sam Clements",
     author_email = "sam.clements@datasift.com",
@@ -25,8 +25,8 @@ setuptools.setup(
 
     entry_points = {
         'console_scripts': [
-            'riemann-client = riemann:main',
-            'riemann-client-{0}.{1} = riemann:main'.format(*sys.version_info)
+            'riemann-client = riemann.command:main',
+            'riemann-client-{0}.{1} = riemann.command:main'.format(*sys.version_info)
         ]
     },
 
