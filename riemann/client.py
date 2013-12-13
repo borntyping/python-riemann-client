@@ -54,7 +54,6 @@ class Client(object):
         """Creates an event and adds it to the next message"""
         event = riemann.riemann_pb2.Event()
         event.service = service
-        event.tags.append('supermann')
         event.tags.extend(data.pop('tags', list()))
         data.setdefault('host', socket.gethostname())
         for name, value in data.items():
