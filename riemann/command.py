@@ -7,6 +7,11 @@ import os
 
 import riemann.client
 
+TRANSPORT_CLASSES = {
+    'udp': riemann.client.UDPTransport,
+    'tcp': riemann.client.TCPTransport
+}
+
 
 def wide_formatter(*args, **kwargs):
     kwargs.setdefault('max_help_position', 32)
@@ -40,17 +45,13 @@ send.add_argument(
     '-p', '--print', action='store_true', dest='print_message',
     help="Print the message that is sent to Riemann")
 send.add_argument(
-    '--udp', action='store_const', const='udp', dest='transport',
-    help="Send messages over UDP (default)")
-send.add_argument(
-    '--tcp', action='store_const', const='tcp', dest='transport',
-    help="Send messages over TCP")
-send.set_defaults(transport='udp')
+    '--transport', choices=TRANSPORT_CLASSES.keys(), default='tcp',
+    help="The transport to use (default: %(default)s)")
 
 for arg_names, arg_type, arg_help in [
         (['-u', '--time'], int, "Unix timestamp"),
         (['-S', '--state'], str, "Event state"),
-        (['-H', '--host'], str, "Event host (defaults to the current host)"),
+        (['-e', '--event-host'], str, "Event host (defaults to the current host)"),
         (['-D', '--description'], str, "A description of the event"),
         (['-s', '--service'], str, "Event service"),
         (['-T', '--tags'], list, "Event tags"),
@@ -66,22 +67,18 @@ def filter_dict(function, dictionary):
 
 def main():
     args = parser.parse_args()
-
-    transport = {
-        'udp': riemann.client.UDPTransport,
-        'tcp': riemann.client.TCPTransport
-    }[args.transport](host=args.host, port=args.port)
-
+    transport = TRANSPORT_CLASSES[args.transport](args.host, args.port)
     with riemann.client.Client(transport=transport) as client:
         event = client.event(**filter_dict(lambda k, v: v is not None, {
             "time": args.time,
             "state": args.state,
-            "host": args.host,
+            "host": args.event_host,
             "description": args.description,
             "service": args.service,
             "tags": args.tags,
             "ttl": args.ttl,
             "metric_f": args.metric
         }))
-        if args.print_message:
-            print(str(event).strip())
+
+    if args.print_message:
+        print(str(event).strip())
