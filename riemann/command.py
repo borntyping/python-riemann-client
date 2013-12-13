@@ -1,8 +1,9 @@
 """Riemann command line client"""
 
-from __future__ import absolute_import, unicode_literals, print_function
+from __future__ import absolute_import, print_function
 
 import argparse
+import os
 
 import riemann.client
 
@@ -12,6 +13,8 @@ def wide_formatter(*args, **kwargs):
     kwargs.setdefault('width', 96)
     return argparse.HelpFormatter(*args, **kwargs)
 
+os.environ.setdefault('RIEMANN_HOST', 'localhost')
+os.environ.setdefault('RIEMANN_PORT', '5555')
 
 parser = argparse.ArgumentParser(formatter_class=wide_formatter)
 parser.add_argument(
@@ -21,21 +24,28 @@ parser.add_argument(
         author=riemann.__author__),
     help="Show this program's version and exit")
 parser.add_argument(
-    'host', type=str, nargs='?', default='localhost',
-    help="The hostname of a Riemann server")
+    'host', type=str, nargs='?', default=os.environ['RIEMANN_HOST'],
+    help="The hostname of a Riemann server (env: %(default)s)")
 parser.add_argument(
-    'port', type=int, nargs='?', default=5555,
-    help="The port to connect to the Riemann server on")
+    'port', type=int, nargs='?', default=os.environ['RIEMANN_PORT'],
+    help="The port to connect to the Riemann server on (env: %(default)s)")
 
 
 subparsers = parser.add_subparsers()
 
 send = subparsers.add_parser(
     'send', formatter_class=wide_formatter,
-    help='Send an event to Riemann')
+    help='Send an event to Riemann', conflict_handler='resolve')
 send.add_argument(
     '-p', '--print', action='store_true', dest='print_message',
     help="Print the message that is sent to Riemann")
+send.add_argument(
+    '--udp', action='store_const', const='udp', dest='transport',
+    help="Send messages over UDP (default)")
+send.add_argument(
+    '--tcp', action='store_const', const='tcp', dest='transport',
+    help="Send messages over TCP")
+send.set_defaults(transport='udp')
 
 for arg_names, arg_type, arg_help in [
         (['-u', '--time'], int, "Unix timestamp"),
@@ -57,16 +67,16 @@ def filter_dict(function, dictionary):
 def main():
     args = parser.parse_args()
 
-    with riemann.client.UDPClient(host=args.host, port=args.port) as client:
-        client.event(args.service, **filter_dict(lambda k, v: v is not None, {
+    with riemann.client.Client(args.host, args.port, args.transport) as client:
+        event = client.event(**filter_dict(lambda k, v: v is not None, {
             "time": args.time,
             "state": args.state,
             "host": args.host,
             "description": args.description,
+            "service": args.service,
             "tags": args.tags,
             "ttl": args.ttl,
             "metric_f": args.metric
         }))
         if args.print_message:
-            print(str(client.next).strip())
-        client.send_next_message()
+            print(str(event).strip())

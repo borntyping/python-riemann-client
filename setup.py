@@ -1,13 +1,11 @@
 #!/usr/bin/env python2.6
 
-from __future__ import unicode_literals
-
 import setuptools
 import sys
 
 setuptools.setup(
     name = "riemann-client",
-    version = '0.2.0',
+    version = '0.3.0',
 
     author = "Sam Clements",
     author_email = "sam.clements@datasift.com",
