@@ -8,6 +8,7 @@ import struct
 
 import riemann.riemann_pb2
 
+
 class Transport(object):
     __metaclass__ = abc.ABCMeta
 
@@ -76,13 +77,8 @@ class TCPTransport(Transport):
 class Client(object):
     """An abstract Riemann client"""
 
-    TRANSPORTS = {
-        'udp': UDPTransport,
-        'tcp': TCPTransport
-    }
-
-    def __init__(self, host='localhost', port=5555, transport='udp'):
-        self.transport = self.TRANSPORTS[transport](host, port)
+    def __init__(self, transport=None):
+        self.transport = transport or UDPTransport
 
     def __enter__(self):
         self.transport.connect()
@@ -91,7 +87,8 @@ class Client(object):
     def __exit__(self, exc_type, exc_value, traceback):
         self.transport.disconnect()
 
-    def create_event(self, data):
+    @staticmethod
+    def create_event(data):
         """Creates an Event from a dictionary"""
         data.setdefault('host', socket.gethostname())
         data.setdefault('tags', list())
@@ -129,5 +126,5 @@ class QueuedClient(Client):
         self.queue = riemann.riemann_pb2.Msg()
 
     def send_event(self, event):
-        self.queue.events.append(event)
+        self.queue.events.extend([event])
         return event

@@ -67,7 +67,12 @@ def filter_dict(function, dictionary):
 def main():
     args = parser.parse_args()
 
-    with riemann.client.Client(args.host, args.port, args.transport) as client:
+    transport = {
+        'udp': riemann.client.UDPTransport,
+        'tcp': riemann.client.TCPTransport
+    }[args.transport](host=args.host, port=args.port)
+
+    with riemann.client.Client(transport=transport) as client:
         event = client.event(**filter_dict(lambda k, v: v is not None, {
             "time": args.time,
             "state": args.state,
