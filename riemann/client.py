@@ -9,6 +9,11 @@ import struct
 import riemann.riemann_pb2
 
 
+class RiemannError(Exception):
+    """Error class for errors recived from the Riemann server"""
+    pass
+
+
 class Transport(object):
     __metaclass__ = abc.ABCMeta
 
@@ -68,10 +73,23 @@ class TCPTransport(Transport):
         response = riemann.riemann_pb2.Msg()
         response.ParseFromString(self.socket.recv(response_len))
 
-        # Temporary sanity check, to be replaced with a retrying transport
-        assert not response.ok
+        # Handle error messages
+        if not response.ok:
+            raise RiemannError(response.error)
 
         return response
+
+
+class RetryingTCPTransport(TCPTransport):
+    def write(self, message, tries=3):
+        for i in xrange(reversed(tries)):
+            try:
+                response = super(RetryingTCPTransport, self).write(message)
+            except (socket.error, struct.error, RiemannError) as error:
+                if i <= 0:
+                    raise error
+            else:
+                return response
 
 
 class Client(object):
