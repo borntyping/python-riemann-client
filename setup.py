@@ -5,7 +5,7 @@ import sys
 
 setuptools.setup(
     name = "riemann-client",
-    version = '0.5.0',
+    version = '1.0.0',
 
     author = "Sam Clements",
     author_email = "sam.clements@datasift.com",
@@ -29,7 +29,7 @@ setuptools.setup(
     },
 
     classifiers = [
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
         'License :: OSI Approved',
         'License :: OSI Approved :: MIT License',
         'Operating System :: Unix',
