@@ -10,6 +10,23 @@ python-riemann-client
 
 A `Riemann <http://riemann.io/>`_ client and command line tool.
 
+Installation
+------------
+
+::
+
+	pip install riemann-client
+
+
+Usage
+-----
+
+::
+
+	riemann-client [host] [port] send [-s SERVICE] [-S STATE] [-m METRIC] [...]
+
+See `riemann-client --help` for more options.
+
 Requirements
 ------------
 
