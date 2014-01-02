@@ -6,9 +6,10 @@ import StringIO
 import py.test
 
 import riemann.client
+import riemann.transport
 
 
-class StringTransport(riemann.client.Transport):
+class StringTransport(riemann.transport.Transport):
     def connect(self):
         self.string = StringIO.StringIO()
 

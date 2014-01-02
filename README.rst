@@ -23,7 +23,7 @@ Usage
 
 ::
 
-	riemann-client [host] [port] send [-s SERVICE] [-S STATE] [-m METRIC] [...]
+	riemann-client [host] [port] [-t {tcp,udp}] send [-s SERVICE] [-S STATE] [-m METRIC] [...]
 
 See `riemann-client --help` for more options.
 

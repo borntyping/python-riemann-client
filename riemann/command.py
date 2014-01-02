@@ -3,13 +3,13 @@
 from __future__ import absolute_import, print_function
 
 import argparse
-import os
 
 import riemann.client
+import riemann.transport
 
 TRANSPORT_CLASSES = {
-    'udp': riemann.client.UDPTransport,
-    'tcp': riemann.client.TCPTransport
+    'udp': riemann.transport.UDPTransport,
+    'tcp': riemann.transport.TCPTransport
 }
 
 
@@ -18,10 +18,11 @@ def wide_formatter(*args, **kwargs):
     kwargs.setdefault('width', 96)
     return argparse.HelpFormatter(*args, **kwargs)
 
-os.environ.setdefault('RIEMANN_HOST', 'localhost')
-os.environ.setdefault('RIEMANN_PORT', '5555')
-
-parser = argparse.ArgumentParser(formatter_class=wide_formatter)
+parser = argparse.ArgumentParser(
+    formatter_class=wide_formatter, description=(
+        "Uses the RIEMANN_HOST and RIEMANN_PORT environment variables "
+        "if no host and port are given. If they are not set, the transports "
+        "will use a default host and port of localhost:5555."))
 parser.add_argument(
     '-v', '--version', action='version',
     version='python-riemann-client v{version} by {author}'.format(
@@ -29,34 +30,33 @@ parser.add_argument(
         author=riemann.__author__),
     help="Show this program's version and exit")
 parser.add_argument(
-    'host', type=str, nargs='?', default=os.environ['RIEMANN_HOST'],
-    help="The hostname of a Riemann server (env: %(default)s)")
+    'host', type=str, nargs='?', default=None,
+    help="The hostname of a Riemann server (default: localhost)")
 parser.add_argument(
-    'port', type=int, nargs='?', default=os.environ['RIEMANN_PORT'],
-    help="The port to connect to the Riemann server on (env: %(default)s)")
+    'port', type=int, nargs='?', default=None,
+    help="The port to connect to the Riemann server on (default: 5555)")
+parser.add_argument(
+    '-t', '--transport', choices=TRANSPORT_CLASSES.keys(), default='tcp',
+    help="The transport to use (default: %(default)s)")
 
-
-subparsers = parser.add_subparsers()
+subparsers = parser.add_subparsers(dest='subparser')
 
 send = subparsers.add_parser(
     'send', formatter_class=wide_formatter,
-    help='Send an event to Riemann', conflict_handler='resolve')
+    help='Send an event to Riemann')
 send.add_argument(
     '-p', '--print', action='store_true', dest='print_message',
     help="Print the message that is sent to Riemann")
-send.add_argument(
-    '--transport', choices=TRANSPORT_CLASSES.keys(), default='tcp',
-    help="The transport to use (default: %(default)s)")
 
 for arg_names, arg_type, arg_help in [
         (['-u', '--time'], int, "Unix timestamp"),
-        (['-S', '--state'], str, "Event state"),
-        (['-e', '--event-host'], str, "Event host (defaults to the current host)"),
-        (['-D', '--description'], str, "A description of the event"),
-        (['-s', '--service'], str, "Event service"),
-        (['-T', '--tags'], list, "Event tags"),
-        (['-t', '--ttl'], int, "Event time to live"),
-        (['-m', '--metric'], float, "Event metric value")]:
+        (['-S', '--state'], str, "State"),
+        (['-e', '--event-host'], str, "Host"),
+        (['-D', '--description'], str, "Description"),
+        (['-s', '--service'], str, "Service"),
+        (['-T', '--tags'], list, "Tags"),
+        (['-l', '--ttl'], int, "Time to live"),
+        (['-m', '--metric'], float, "Value")]:
     send.add_argument(
         *arg_names, metavar=arg_type.__name__, type=arg_type, help=arg_help)
 
@@ -65,11 +65,8 @@ def filter_dict(function, dictionary):
     return dict((k, v) for k, v in dictionary.items() if function(k, v))
 
 
-def main():
-    args = parser.parse_args()
-    transport = TRANSPORT_CLASSES[args.transport](args.host, args.port)
-    with riemann.client.Client(transport=transport) as client:
-        event = client.event(**filter_dict(lambda k, v: v is not None, {
+def send(args, client):
+    client.event(**filter_dict(lambda k, v: v is not None, {
             "time": args.time,
             "state": args.state,
             "host": args.event_host,
@@ -82,3 +79,10 @@ def main():
 
     if args.print_message:
         print(str(event).strip())
+
+
+def main():
+    args = parser.parse_args()
+    transport = TRANSPORT_CLASSES[args.transport](args.host, args.port)
+    with riemann.client.Client(transport=transport) as client:
+        {'send': send}[args.subparser](args, client)
