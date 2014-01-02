@@ -66,16 +66,16 @@ def filter_dict(function, dictionary):
 
 
 def send(args, client):
-    client.event(**filter_dict(lambda k, v: v is not None, {
-            "time": args.time,
-            "state": args.state,
-            "host": args.event_host,
-            "description": args.description,
-            "service": args.service,
-            "tags": args.tags,
-            "ttl": args.ttl,
-            "metric_f": args.metric
-        }))
+    event = client.event(**filter_dict(lambda k, v: v is not None, {
+        "time": args.time,
+        "state": args.state,
+        "host": args.event_host,
+        "description": args.description,
+        "service": args.service,
+        "tags": args.tags,
+        "ttl": args.ttl,
+        "metric_f": args.metric
+    }))
 
     if args.print_message:
         print(str(event).strip())
