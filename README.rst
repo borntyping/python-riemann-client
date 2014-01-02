@@ -2,8 +2,8 @@
 python-riemann-client
 =====================
 
-.. image:: https://pypip.in/v/riemann/badge.png
-    :target: https://pypi.python.org/pypi/riemann
+.. image:: https://pypip.in/v/riemann-client/badge.png
+    :target: https://pypi.python.org/pypi/riemann-client
 
 .. image:: https://travis-ci.org/borntyping/python-riemann-client.png?branch=master
     :target: https://travis-ci.org/borntyping/python-riemann-client
