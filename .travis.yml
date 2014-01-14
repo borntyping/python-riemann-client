@@ -2,8 +2,7 @@ language: python
 env:
   - TOXENV=py26
   - TOXENV=py27
-  - TOXENV=py26-flake8
 install:
-  - pip install tox --use-mirrors
+  - pip install tox
 script:
   - tox
