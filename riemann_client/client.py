@@ -4,8 +4,8 @@ from __future__ import absolute_import
 
 import socket
 
-import riemann.riemann_pb2
-import riemann.transport
+import riemann_client.riemann_pb2
+import riemann_client.transport
 
 
 class Client(object):
@@ -13,7 +13,7 @@ class Client(object):
 
     def __init__(self, transport=None):
         if transport is None:
-            transport = riemann.transport.TCPTransport()
+            transport = riemann_client.transport.TCPTransport()
         self.transport = transport
 
     def __enter__(self):
@@ -28,7 +28,7 @@ class Client(object):
         """Creates an Event from a dictionary"""
         data.setdefault('host', socket.gethostname())
         data.setdefault('tags', list())
-        event = riemann.riemann_pb2.Event()
+        event = riemann_client.riemann_pb2.Event()
         event.tags.extend(data.pop('tags'))
         for name, value in data.items():
             if value is not None:
@@ -37,7 +37,7 @@ class Client(object):
 
     def send_event(self, event):
         """Wraps an event in a message and sends it to Riemann"""
-        message = riemann.riemann_pb2.Msg()
+        message = riemann_client.riemann_pb2.Msg()
         message.events.extend([event])
         self.transport.send(message)
         return event
@@ -63,7 +63,7 @@ class Client(object):
         }
 
     def send_query(self, query):
-        message = riemann.riemann_pb2.Msg()
+        message = riemann_client.riemann_pb2.Msg()
         message.query.string = query
         self.transport.send(message)
         return self.transport.recv()
@@ -78,12 +78,12 @@ class QueuedClient(Client):
 
     def __init__(self, *args, **kwargs):
         super(QueuedClient, self).__init__(*args, **kwargs)
-        self.queue = riemann.riemann_pb2.Msg()
+        self.queue = riemann_client.riemann_pb2.Msg()
 
     def flush(self):
         """Sends the waiting message to Riemann"""
         self.transport.send(self.queue)
-        self.queue = riemann.riemann_pb2.Msg()
+        self.queue = riemann_client.riemann_pb2.Msg()
 
     def send_event(self, event):
         self.queue.events.extend([event])

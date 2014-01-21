@@ -5,12 +5,12 @@ import StringIO
 
 import py.test
 
-import riemann.client
-import riemann.riemann_pb2
-import riemann.transport
+import riemann_client.client
+import riemann_client.riemann_pb2
+import riemann_client.transport
 
 
-class StringTransport(riemann.transport.Transport):
+class StringTransport(riemann_client.transport.Transport):
     def connect(self):
         self.string = StringIO.StringIO()
 
@@ -18,7 +18,7 @@ class StringTransport(riemann.transport.Transport):
         self.string.write(message.SerializeToString())
 
     def recv(self):
-        message = riemann.riemann_pb2.Msg()
+        message = riemann_client.riemann_pb2.Msg()
         message.ok = True
         return message
 
@@ -28,7 +28,7 @@ class StringTransport(riemann.transport.Transport):
 
 @py.test.fixture
 def client(request):
-    client = riemann.client.Client(transport=StringTransport())
+    client = riemann_client.client.Client(transport=StringTransport())
     client.transport.connect()
 
     @request.addfinalizer
@@ -58,8 +58,7 @@ class TestClient(object):
         assert "tag-1" in client.transport.string.getvalue()
 
     def test_event_cls(self, client):
-        assert isinstance(client.create_event({}), riemann.riemann_pb2.Event)
-        assert isinstance(client.event(), riemann.riemann_pb2.Event)
+        assert isinstance(client.event(), riemann_client.riemann_pb2.Event)
 
     def test_query(self, client):
         assert client.query("true") == []
@@ -67,7 +66,7 @@ class TestClient(object):
 
 @py.test.fixture
 def queued_client(request):
-    client = riemann.client.QueuedClient(transport=StringTransport())
+    client = riemann_client.client.QueuedClient(transport=StringTransport())
     client.transport.connect()
 
     @request.addfinalizer

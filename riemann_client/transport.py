@@ -7,7 +7,7 @@ import os
 import socket
 import struct
 
-import riemann.riemann_pb2
+import riemann_client.riemann_pb2
 
 
 class RiemannError(Exception):
@@ -79,7 +79,7 @@ class TCPTransport(Transport):
     def recv(self):
         length = struct.unpack('!I', self.socket.recv(4))[0]
 
-        response = riemann.riemann_pb2.Msg()
+        response = riemann_client.riemann_pb2.Msg()
         response.ParseFromString(self.recvall(length))
 
         if not response.ok:

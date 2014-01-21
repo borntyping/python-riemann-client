@@ -5,12 +5,12 @@ from __future__ import absolute_import, print_function
 import argparse
 import json
 
-import riemann.client
-import riemann.transport
+import riemann_client.client
+import riemann_client.transport
 
 TRANSPORT_CLASSES = {
-    'udp': riemann.transport.UDPTransport,
-    'tcp': riemann.transport.TCPTransport
+    'udp': riemann_client.transport.UDPTransport,
+    'tcp': riemann_client.transport.TCPTransport
 }
 
 
@@ -27,8 +27,8 @@ parser = argparse.ArgumentParser(
 parser.add_argument(
     '-v', '--version', action='version',
     version='python-riemann-client v{version} by {author}'.format(
-        version=riemann.__version__,
-        author=riemann.__author__),
+        version=riemann_client.__version__,
+        author=riemann_client.__author__),
     help="Show this program's version and exit")
 parser.add_argument(
     'host', type=str, nargs='?', default=None,
@@ -92,5 +92,5 @@ def query(args, client):
 def main():
     args = parser.parse_args()
     transport = TRANSPORT_CLASSES[args.transport](args.host, args.port)
-    with riemann.client.Client(transport=transport) as client:
+    with riemann_client.client.Client(transport=transport) as client:
         {'send': send, 'query': query}[args.subparser](args, client)
