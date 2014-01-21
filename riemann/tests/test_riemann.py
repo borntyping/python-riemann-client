@@ -6,6 +6,7 @@ import StringIO
 import py.test
 
 import riemann.client
+import riemann.riemann_pb2
 import riemann.transport
 
 
@@ -13,8 +14,13 @@ class StringTransport(riemann.transport.Transport):
     def connect(self):
         self.string = StringIO.StringIO()
 
-    def write(self, message):
+    def send(self, message):
         self.string.write(message.SerializeToString())
+
+    def recv(self):
+        message = riemann.riemann_pb2.Msg()
+        message.ok = True
+        return message
 
     def disconnect(self):
         self.string.close()
@@ -33,8 +39,6 @@ def client(request):
 
 
 class TestClient(object):
-    """Tests Client.create_event()"""
-
     def test_service(self, client):
         client.event(service='test event')
         assert 'test event' in client.transport.string.getvalue()
@@ -57,9 +61,8 @@ class TestClient(object):
         assert isinstance(client.create_event({}), riemann.riemann_pb2.Event)
         assert isinstance(client.event(), riemann.riemann_pb2.Event)
 
-    @py.test.mark.xfail
     def test_query(self, client):
-        client.query("true")
+        assert client.query("true") == []
 
 
 @py.test.fixture

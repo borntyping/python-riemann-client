@@ -31,22 +31,46 @@ class Client(object):
         event = riemann.riemann_pb2.Event()
         event.tags.extend(data.pop('tags'))
         for name, value in data.items():
-            setattr(event, name, value)
+            if value is not None:
+                setattr(event, name, value)
         return event
 
     def send_event(self, event):
         """Wraps an event in a message and sends it to Riemann"""
         message = riemann.riemann_pb2.Msg()
         message.events.extend([event])
-        self.transport.write(message)
+        self.transport.send(message)
         return event
 
     def event(self, **data):
         """Sends an event"""
         return self.send_event(self.create_event(data))
 
-    def query(self, *args, **kwargs):
-        raise NotImplemented("Querying is not yet supported")
+    @staticmethod
+    def create_dict(event):
+        """Creates a dict from an Event"""
+        return {
+            'time': event.time,
+            'state': event.state,
+            'host': event.host,
+            'description': event.description,
+            'service': event.service,
+            'tags': list(event.tags),
+            'ttl': event.ttl,
+            'metric_f': event.metric_f,
+            'metric_d': event.metric_d,
+            'metric_sint64': event.metric_sint64
+        }
+
+    def send_query(self, query):
+        message = riemann.riemann_pb2.Msg()
+        message.query.string = query
+        self.transport.send(message)
+        return self.transport.recv()
+
+    def query(self, query):
+        response = self.send_query(query)
+        return [self.create_dict(e) for e in response.events]
 
 
 class QueuedClient(Client):
@@ -58,7 +82,7 @@ class QueuedClient(Client):
 
     def flush(self):
         """Sends the waiting message to Riemann"""
-        self.transport.write(self.queue)
+        self.transport.send(self.queue)
         self.queue = riemann.riemann_pb2.Msg()
 
     def send_event(self, event):

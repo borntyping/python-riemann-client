@@ -3,6 +3,7 @@
 from __future__ import absolute_import, print_function
 
 import argparse
+import json
 
 import riemann.client
 import riemann.transport
@@ -60,29 +61,36 @@ for arg_names, arg_type, arg_help in [
     send.add_argument(
         *arg_names, metavar=arg_type.__name__, type=arg_type, help=arg_help)
 
-
-def filter_dict(function, dictionary):
-    return dict((k, v) for k, v in dictionary.items() if function(k, v))
+query = subparsers.add_parser('query', help='Query the Riemann index')
+query.add_argument(
+    'query', type=str,
+    help="The query to send")
+query.add_argument(
+    '-pp', '--pretty-print', action='store_true',
+    help="Pretty print output")
 
 
 def send(args, client):
-    event = client.event(**filter_dict(lambda k, v: v is not None, {
-        "time": args.time,
-        "state": args.state,
-        "host": args.event_host,
-        "description": args.description,
-        "service": args.service,
-        "tags": args.tags,
-        "ttl": args.ttl,
-        "metric_f": args.metric
-    }))
+    event = client.event(
+        time=args.time,
+        state=args.state,
+        host=args.host,
+        description=args.description,
+        service=args.service,
+        tags=args.tags,
+        ttl=args.ttl,
+        metric_f=args.metric)
 
     if args.print_message:
         print(str(event).strip())
+
+
+def query(args, client):
+    print(json.dumps(client.query(args.query), sort_keys=True, indent=2))
 
 
 def main():
     args = parser.parse_args()
     transport = TRANSPORT_CLASSES[args.transport](args.host, args.port)
     with riemann.client.Client(transport=transport) as client:
-        {'send': send}[args.subparser](args, client)
+        {'send': send, 'query': query}[args.subparser](args, client)

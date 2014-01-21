@@ -29,6 +29,10 @@ class Transport(object):
     def __exit__(self, exc_type, exc_value, traceback):
         self.disconnect()
 
+    @property
+    def address(self):
+        return self.host, self.port
+
     @abc.abstractmethod
     def connect(self):
         pass
@@ -38,12 +42,12 @@ class Transport(object):
         pass
 
     @abc.abstractmethod
-    def write(self):
+    def send(self):
         pass
 
-    @property
-    def address(self):
-        return self.host, self.port
+    @abc.abstractmethod
+    def recv(self):
+        pass
 
 
 class UDPTransport(Transport):
@@ -53,29 +57,37 @@ class UDPTransport(Transport):
     def disconnect(self):
         self.socket.close()
 
-    def write(self, message):
+    def send(self, message):
         self.socket.sendto(message.SerializeToString(), self.address)
+
+    def recv(self):
+        raise NotImplementedError
 
 
 class TCPTransport(Transport):
     def connect(self):
         self.socket = socket.create_connection(self.address)
+        self.socket.setblocking(True)
 
     def disconnect(self):
         self.socket.close()
 
-    def write(self, message):
-        # Send the message to the server
-        data = message.SerializeToString()
-        self.socket.send(struct.pack('!I', len(data)) + data)
+    def send(self, message):
+        message = message.SerializeToString()
+        self.socket.sendall(struct.pack('!I', len(message)) + message)
 
-        # Return the server's response
-        response_len = struct.unpack('!I', self.socket.recv(4))[0]
+    def recv(self):
+        length = struct.unpack('!I', self.socket.recv(4))[0]
+
         response = riemann.riemann_pb2.Msg()
-        response.ParseFromString(self.socket.recv(response_len))
+        response.ParseFromString(self.recvall(length))
 
-        # Handle error messages
         if not response.ok:
             raise RiemannError(response.error)
-
         return response
+
+    def recvall(self, length, bufsize=4096):
+        data = ""
+        while len(data) < length:
+            data += self.socket.recv(bufsize)
+        return data
