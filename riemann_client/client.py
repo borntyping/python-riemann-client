@@ -39,8 +39,7 @@ class Client(object):
         """Wraps an event in a message and sends it to Riemann"""
         message = riemann_client.riemann_pb2.Msg()
         message.events.extend([event])
-        self.transport.send(message)
-        return event
+        return self.transport.send(message)
 
     def event(self, **data):
         """Sends an event"""
@@ -65,8 +64,7 @@ class Client(object):
     def send_query(self, query):
         message = riemann_client.riemann_pb2.Msg()
         message.query.string = query
-        self.transport.send(message)
-        return self.transport.recv()
+        return self.transport.send(message)
 
     def query(self, query):
         response = self.send_query(query)

@@ -44,10 +44,6 @@ class Transport(object):
     def send(self):
         pass
 
-    @abc.abstractmethod
-    def recv(self):
-        pass
-
 
 class UDPTransport(Transport):
     def connect(self):
@@ -58,9 +54,7 @@ class UDPTransport(Transport):
 
     def send(self, message):
         self.socket.sendto(message.SerializeToString(), self.address)
-
-    def recv(self):
-        raise NotImplementedError
+        return NotImplemented
 
 
 class TCPTransport(Transport):
@@ -75,18 +69,18 @@ class TCPTransport(Transport):
         message = message.SerializeToString()
         self.socket.sendall(struct.pack('!I', len(message)) + message)
 
-    def recv(self):
         length = struct.unpack('!I', self.socket.recv(4))[0]
-
         response = riemann_client.riemann_pb2.Msg()
-        response.ParseFromString(self.recvall(length))
+        response.ParseFromString(self.socket_recvall(socket, length))
 
         if not response.ok:
             raise RiemannError(response.error)
+
         return response
 
-    def recvall(self, length, bufsize=4096):
+    @staticmethod
+    def socket_recvall(socket, length, bufsize=4096):
         data = ""
         while len(data) < length:
-            data += self.socket.recv(bufsize)
+            data += socket.recv(bufsize)
         return data

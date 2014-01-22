@@ -16,9 +16,6 @@ class StringTransport(riemann_client.transport.Transport):
 
     def send(self, message):
         self.string.write(message.SerializeToString())
-
-    def recv(self):
-        message = riemann_client.riemann_pb2.Msg()
         message.ok = True
         return message
 
@@ -38,18 +35,24 @@ def client(request):
     return client
 
 
+@py.test.fixture
+def event(client):
+    """Send and return a blank event"""
+    message = client.event()
+    return message.events[0]
+
+
 class TestClient(object):
     def test_service(self, client):
         client.event(service='test event')
         assert 'test event' in client.transport.string.getvalue()
 
-    def test_default_hostname(self, client):
-        event = client.event()
+    def test_default_hostname(self, client, event):
         assert socket.gethostname() == event.host
         assert socket.gethostname() in client.transport.string.getvalue()
 
     def test_custom_hostname(self, client):
-        event = client.event(host="test.example.com")
+        event = client.event(host="test.example.com").events[0]
         assert "test.example.com" == event.host
         assert "test.example.com" in client.transport.string.getvalue()
 
@@ -57,8 +60,8 @@ class TestClient(object):
         client.event(tags=['tag-1', 'tag-2'])
         assert "tag-1" in client.transport.string.getvalue()
 
-    def test_event_cls(self, client):
-        assert isinstance(client.event(), riemann_client.riemann_pb2.Event)
+    def test_event_cls(self, event):
+        assert isinstance(event, riemann_client.riemann_pb2.Event)
 
     def test_query(self, client):
         assert client.query("true") == []
