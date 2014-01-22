@@ -9,6 +9,14 @@ import struct
 import riemann_client.riemann_pb2
 
 
+def socket_recvall(socket, length, bufsize=4096):
+    """Recives bytes from a socket until the buffer is the requested length"""
+    data = ""
+    while len(data) < length:
+        data += socket.recv(bufsize)
+    return data
+
+
 class RiemannError(Exception):
     """Error class for errors recived from the Riemann server"""
     pass
@@ -71,16 +79,9 @@ class TCPTransport(Transport):
 
         length = struct.unpack('!I', self.socket.recv(4))[0]
         response = riemann_client.riemann_pb2.Msg()
-        response.ParseFromString(self.socket_recvall(socket, length))
+        response.ParseFromString(socket_recvall(self.socket, length))
 
         if not response.ok:
             raise RiemannError(response.error)
 
         return response
-
-    @staticmethod
-    def socket_recvall(socket, length, bufsize=4096):
-        data = ""
-        while len(data) < length:
-            data += socket.recv(bufsize)
-        return data
