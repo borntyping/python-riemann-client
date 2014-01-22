@@ -3,7 +3,6 @@
 from __future__ import absolute_import
 
 import abc
-import os
 import socket
 import struct
 
@@ -18,9 +17,9 @@ class RiemannError(Exception):
 class Transport(object):
     __metaclass__ = abc.ABCMeta
 
-    def __init__(self, host=None, port=None):
-        self.host = host or os.environ.get('RIEMANN_HOST', 'localhost')
-        self.port = port or os.environ.get('RIEMANN_PORT', 5555)
+    def __init__(self, host='localhost', port=5555):
+        self.host = host
+        self.port = port
 
     def __enter__(self):
         self.connect()
