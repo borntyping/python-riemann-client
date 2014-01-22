@@ -25,7 +25,7 @@ parser.add_argument(
 
 parser.add_argument(
     '-v', '--version', action='version',
-    version='python-riemann-client v{version} by {author}'.format(
+    version='riemann-client v{version} by {author}'.format(
         version=riemann_client.__version__,
         author=riemann_client.__author__),
     help="Show this program's version and exit")
