@@ -26,10 +26,9 @@ class Client(object):
     @staticmethod
     def create_event(data):
         """Creates an Event from a dictionary"""
-        data.setdefault('host', socket.gethostname())
-        data.setdefault('tags', list())
         event = riemann_client.riemann_pb2.Event()
-        event.tags.extend(data.pop('tags'))
+        event.host = socket.gethostname()
+        event.tags.extend(data.pop('tags', []))
         for name, value in data.items():
             if value is not None:
                 setattr(event, name, value)
