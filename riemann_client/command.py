@@ -52,7 +52,7 @@ def send_function(args, client):
     event = client.event(
         time=args.time,
         state=args.state,
-        host=args.host,
+        host=args.event_host,
         description=args.description,
         service=args.service,
         tags=args.tags,

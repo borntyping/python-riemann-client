@@ -1,11 +1,10 @@
 #!/usr/bin/env python2.6
 
 import setuptools
-import sys
 
 setuptools.setup(
     name = "riemann-client",
-    version = '3.0.1',
+    version = '3.0.2',
 
     author = "Sam Clements",
     author_email = "sam.clements@datasift.com",
