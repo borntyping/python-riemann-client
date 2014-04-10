@@ -23,8 +23,8 @@ setuptools.setup(
     packages=setuptools.find_packages(),
 
     install_requires=[
-        'argparse==1.1',
-        'protobuf==2.5.0',
+        'argparse>=1.1',
+        'protobuf>=2.3.0',
     ],
 
     entry_points={

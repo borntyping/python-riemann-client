@@ -313,11 +313,6 @@ _EVENT.fields_by_name['attributes'].message_type = _ATTRIBUTE
 _MSG.fields_by_name['states'].message_type = _STATE
 _MSG.fields_by_name['query'].message_type = _QUERY
 _MSG.fields_by_name['events'].message_type = _EVENT
-DESCRIPTOR.message_types_by_name['State'] = _STATE
-DESCRIPTOR.message_types_by_name['Event'] = _EVENT
-DESCRIPTOR.message_types_by_name['Query'] = _QUERY
-DESCRIPTOR.message_types_by_name['Msg'] = _MSG
-DESCRIPTOR.message_types_by_name['Attribute'] = _ATTRIBUTE
 
 class State(message.Message):
   __metaclass__ = reflection.GeneratedProtocolMessageType
