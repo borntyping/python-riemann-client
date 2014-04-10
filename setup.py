@@ -12,6 +12,7 @@ setuptools.setup(
     url = "https://github.com/borntyping/python-riemann-client",
     description = "A Riemann client and command line tool",
     long_description = open('README.rst').read(),
+    license = "MIT",
 
     packages = setuptools.find_packages(),
 
