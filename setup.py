@@ -10,7 +10,7 @@ https://github.com/borntyping/python-riemann-client
 
 setuptools.setup(
     name='riemann-client',
-    version='3.0.3',
+    version='3.1.0-dev',
 
     author="Sam Clements",
     author_email="sam.clements@datasift.com",

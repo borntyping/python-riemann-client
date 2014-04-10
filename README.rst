@@ -31,7 +31,7 @@ As a library::
 Installation
 ------------
 
-``riemann-client`` requires Python 2.6 or 2.7, and can be installed with ``pip install riemann-client``. Python 3 is not supported due to the dependency on the Google `protobuf <https://pypi.python.org/pypi/protobuf>`_ package.
+``riemann-client`` requires Python 2.6 or 2.7, and can be installed with ``pip install riemann-client``. Python 3 is not supported due to the dependency on the Google `protobuf <https://pypi.python.org/pypi/protobuf>`_ package. RPMs can be built using `rpmbuild` - run `make` to build an RPM and copy it to `dist/`.
 
 Requirements
 ^^^^^^^^^^^^
@@ -43,6 +43,12 @@ Changelog
 ---------
 
 Version numbers use the `semver <http://semver.org/>`_ specification. A new major version indicates breaking changes.
+
+Version 3.1.0
+^^^^^^^^^^^^^
+
+* Relaxed version requirements to fit CentOS 6 packages
+* Added Makefile and specfile for building RPMs with rpmbuild
 
 Version 3.0.0
 ^^^^^^^^^^^^^
