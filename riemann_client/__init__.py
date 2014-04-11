@@ -1,4 +1,4 @@
 """A Python Riemann client and command line tool"""
 
-__version__ = '3.1.0-dev'
+__version__ = '4.0.0'
 __author__ = 'Sam Clements <sam.clements@datasift.com>'
