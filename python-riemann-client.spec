@@ -26,12 +26,13 @@ A Riemann client library and command line tool for Python.
 https://github.com/borntyping/python-riemann-client
 
 %prep
-%setup -n %{name}-%{version}
+%setup -q -n %{name}-%{version}
 
 %build
 python setup.py build
 
 %install
+rm -rf $RPM_BUILD_ROOT
 python setup.py install --no-compile --skip-build --root=$RPM_BUILD_ROOT
 
 %clean
