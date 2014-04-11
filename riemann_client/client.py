@@ -37,7 +37,7 @@ class Client(object):
     def send_event(self, event):
         """Wraps an event in a message and sends it to Riemann"""
         message = riemann_client.riemann_pb2.Msg()
-        message.events.extend([event])
+        message.events.add().MergeFrom(event)
         return self.transport.send(message)
 
     def event(self, **data):
@@ -83,5 +83,5 @@ class QueuedClient(Client):
         self.queue = riemann_client.riemann_pb2.Msg()
 
     def send_event(self, event):
-        self.queue.events.extend([event])
+        self.queue.events.add().MergeFrom(event)
         return event

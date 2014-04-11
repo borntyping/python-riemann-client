@@ -2,31 +2,38 @@
 
 import setuptools
 
+DESCRIPTION = """
+A Riemann client library and command line tool for Python.
+
+https://github.com/borntyping/python-riemann-client
+"""
+
 setuptools.setup(
-    name = "riemann-client",
-    version = '3.0.3',
+    name='riemann-client',
+    version='4.0.0',
 
-    author = "Sam Clements",
-    author_email = "sam.clements@datasift.com",
+    author="Sam Clements",
+    author_email="sam.clements@datasift.com",
 
-    url = "https://github.com/borntyping/python-riemann-client",
-    description = "A Riemann client and command line tool",
-    long_description = open('README.rst').read(),
+    url="https://github.com/borntyping/python-riemann-client",
+    description="A Riemann client and command line tool",
+    long_description=DESCRIPTION.strip(),
+    license="MIT",
 
-    packages = setuptools.find_packages(),
+    packages=setuptools.find_packages(),
 
-    install_requires = [
-        'argparse==1.1',
-        'protobuf==2.5.0',
+    install_requires=[
+        'argparse>=1.1',
+        'protobuf>=2.3.0',
     ],
 
-    entry_points = {
+    entry_points={
         'console_scripts': [
             'riemann-client = riemann_client.command:main',
         ]
     },
 
-    classifiers = [
+    classifiers=[
         'Development Status :: 5 - Production/Stable',
         'License :: OSI Approved',
         'License :: OSI Approved :: MIT License',
