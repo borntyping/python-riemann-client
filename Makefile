@@ -1,12 +1,64 @@
+# Uses fpm (https://github.com/jordansissel/fpm) to build RPMs
+
+vendor="Sam Clements <sam.clements@datasift.com>"
+
+define fpm
+	@mkdir -p dist
+	fpm -s python -t rpm --package $@ --vendor ${vendor} --epoch 1
+endef
+
+
+
 version=$(shell python setup.py --version)
-release=$(shell grep Release python-riemann-client.spec | awk '{ print $$2 }')
+release=1
 
-package=python-riemann-client-${version}-${release}.noarch.rpm
-tarball=${HOME}/rpmbuild/SOURCES/python-riemann-client-${version}.tar.gz
+riemann-client: dist/python-riemann-client-${version}-${release}.noarch.rpm
 
-dist/${package}: python-riemann-client.spec ${tarball}
-	rpmbuild -ba python-riemann-client.spec
-	rsync -a ${HOME}/rpmbuild/RPMS/noarch/${package} dist/${package}
+dist/python-riemann-client-${version}-${release}.noarch.rpm:
+	${fpm} --iteration ${release} --version ${version} setup.py
 
-${tarball}: $(shell find riemann_client)
-	tar -zcf ${tarball} . --exclude-vcs --transform='s/./python-riemann-client-${version}/'
+
+
+el5: riemann-client.el5 protobuf.el5
+
+riemann-client.el5: \
+	dist/python26-riemann-client-${version}-${release}el5.noarch.rpm
+
+dist/python26-riemann-client-${version}-${release}el5.noarch.rpm:
+	${fpm} --version ${version} --iteration ${release}el5 \
+	--python-package-name-prefix python26 \
+	--no-python-dependencies \
+	--depends 'python(abi) = 2.6' \
+	--depends 'python26-argparse >= 1.1' \
+	--depends 'python26-protobuf >= 2.3.0' \
+	setup.py
+
+protobuf_version=2.5.0
+protobuf_release=1
+
+protobuf.el5: \
+	dist/python26-protobuf-${protobuf_version}-${protobuf_release}el5.noarch.rpm
+
+dist/python26-protobuf-${protobuf_version}-${protobuf_release}el5.noarch.rpm:
+	${fpm} --version ${protobuf_version} --iteration ${protobuf_release}el5 \
+	--python-package-name-prefix python26 protobuf
+
+
+
+el6: riemann-client.el6
+
+riemann-client.el6: \
+	dist/python-riemann-client-${version}-${release}el6.noarch.rpm
+
+dist/python-riemann-client-${version}-${release}el6.noarch.rpm:
+	${fpm} --iteration ${release}el6 --version ${version} \
+	--no-python-dependencies \
+	--depends 'python(abi) = 2.6' \
+	--depends 'python-argparse >= 1.1' \
+	--depends 'protobuf-python >= 2.3.0' \
+	setup.py
+
+
+
+.PHONY: \
+	el5 el6 riemann-client riemann-client.el5 protobuf.el5 riemann-client.el6

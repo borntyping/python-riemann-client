@@ -2,12 +2,6 @@
 
 import setuptools
 
-DESCRIPTION = """
-A Riemann client library and command line tool for Python.
-
-https://github.com/borntyping/python-riemann-client
-"""
-
 setuptools.setup(
     name='riemann-client',
     version='4.0.0',
@@ -17,7 +11,7 @@ setuptools.setup(
 
     url="https://github.com/borntyping/python-riemann-client",
     description="A Riemann client and command line tool",
-    long_description=DESCRIPTION.strip(),
+    long_description=open('README.rst').read(),
     license="MIT",
 
     packages=setuptools.find_packages(),
