@@ -10,7 +10,7 @@ endef
 
 
 version=$(shell python setup.py --version)
-release=1
+release=2
 
 riemann-client: dist/python-riemann-client-${version}-${release}.noarch.rpm
 
