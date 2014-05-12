@@ -10,7 +10,7 @@ riemann-client
 
 A `Riemann <http://riemann.io/>`_ client library and command line tool for Python. It supports UDP and TCP transports, queries, and all metric types. However, it does not currently support event attributes or a SSL TCP transport.
 
-The client library aims to provide a simple, minimal API does not require direct interaction with protocol buffers (though it does allow using the protobuf API directly, allowing you to use unsuported features such as event attributes). There is also a queued client that can queue events and then send in a single message.
+The client library aims to provide a simple, minimal API does not require direct interaction with protocol buffers (though it does allow using the protobuf API directly, allowing you to use unsupported features such as event attributes). There is also a queued client that can queue events and then send in a single message.
 
 Usage
 -----
