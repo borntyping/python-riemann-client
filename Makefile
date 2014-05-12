@@ -35,14 +35,28 @@ dist/python26-riemann-client-${version}-${release}.el5.noarch.rpm:
 	setup.py
 
 protobuf_version=2.5.0
-protobuf_release=2
+protobuf_release=3
+protobuf_source=https://pypi.python.org/packages/source/p/protobuf/protobuf-${protobuf_version}.tar.gz
 
 protobuf.el5: dist/python26-protobuf-${protobuf_version}-${protobuf_release}.el5.noarch.rpm
 
-dist/python26-protobuf-${protobuf_version}-${protobuf_release}.el5.noarch.rpm:
+dist/python26-protobuf-${protobuf_version}-${protobuf_release}.el5.noarch.rpm: build/protobuf-${protobuf_version}
 	${fpm} --version ${protobuf_version} --iteration ${protobuf_release}.el5 \
-	--python-package-name-prefix python26 protobuf
+	--python-package-name-prefix python26 \
+	--python-bin python2.6 \
+	build/protobuf-${protobuf_version}/setup.py
 
+# easy_install pulls the full protobuf package from an external site, this
+# fetches the exact package we want to use. This also fixes permissions for the
+# package metadata, since those seem to be broken (the egg-info directory is not
+# world readable, meaning that non-root users can't import the package). If
+# you're reading this and need to fix this, I'm very sorry.
+
+build/protobuf-${protobuf_version}:
+	@mkdir -p build
+	curl -sq ${protobuf_source} | tar xz --directory build
+	chmod -R g+w,o+r build/protobuf-${protobuf_version}/protobuf.egg-info
+	@touch build/protobuf-${protobuf_version}
 
 el6: riemann-client.el6
 
