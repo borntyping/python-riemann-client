@@ -28,6 +28,18 @@ As a library::
 		client.event(service='riemann-client', state='awesome')
 		client.query("service = 'riemann-client'")
 
+A more detailed example, using both a non-default transport and a queued client::
+
+	from riemann_client.transport import TCPTransport
+	from riemann_client.client import QueuedClient
+
+	client = QueuedClient(TCPTransport('localhost', 5555))
+	client.event(service='one', metric_f=1)
+	client.event(service='two', metric_f=2)
+	client.flush()
+
+The ``QueuedClient`` class modifies the ``event()`` method to add events to a queue instead of immediately sending them, and adds the ``flush()`` method to send the current event queue as a single message.
+
 Installation
 ------------
 
