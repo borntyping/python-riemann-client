@@ -4,6 +4,7 @@ from __future__ import absolute_import, print_function
 
 import argparse
 import json
+import sys
 import os
 
 import riemann_client.client
@@ -102,4 +103,9 @@ def main():
     transport = transport_class(args.host, args.port)
 
     with riemann_client.client.Client(transport=transport) as client:
-        args.function(args, client)
+        try:
+            args.function(args, client)
+        except riemann_client.transport.RiemannError as exception:
+            print("The Riemann server responded with an error: {}".format(
+                exception.message), file=sys.stderr)
+            exit(1)

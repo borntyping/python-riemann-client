@@ -4,7 +4,7 @@ import setuptools
 
 setuptools.setup(
     name='riemann-client',
-    version='4.0.1',
+    version='4.1.0-dev',
 
     author="Sam Clements",
     author_email="sam.clements@datasift.com",
