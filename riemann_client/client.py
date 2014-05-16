@@ -66,6 +66,8 @@ class Client(object):
         return self.transport.send(message)
 
     def query(self, query):
+        if isinstance(self.transport, riemann_client.transport.UDPTransport):
+            raise Exception('Cannot query the Riemann server over UDP')
         response = self.send_query(query)
         return [self.create_dict(e) for e in response.events]
 
