@@ -29,6 +29,11 @@ class Client(object):
         event = riemann_client.riemann_pb2.Event()
         event.host = socket.gethostname()
         event.tags.extend(data.pop('tags', []))
+
+        for key, value in data.pop('attributes', {}).items():
+            attribute = event.attributes.add()
+            attribute.key, attribute.value = key, value
+
         for name, value in data.items():
             if value is not None:
                 setattr(event, name, value)
@@ -55,6 +60,7 @@ class Client(object):
             'service': event.service,
             'tags': list(event.tags),
             'ttl': event.ttl,
+            'attributes': dict(((a.key, a.value) for a in event.attributes)),
             'metric_f': event.metric_f,
             'metric_d': event.metric_d,
             'metric_sint64': event.metric_sint64
