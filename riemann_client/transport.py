@@ -24,11 +24,9 @@ class RiemannError(Exception):
 
 
 class Transport(object):
-    __metaclass__ = abc.ABCMeta
+    """Abstract Transport definition"""
 
-    def __init__(self, host='localhost', port=5555):
-        self.host = host
-        self.port = port
+    __metaclass__ = abc.ABCMeta
 
     def __enter__(self):
         self.connect()
@@ -36,10 +34,6 @@ class Transport(object):
 
     def __exit__(self, exc_type, exc_value, traceback):
         self.disconnect()
-
-    @property
-    def address(self):
-        return self.host, self.port
 
     @abc.abstractmethod
     def connect(self):
@@ -54,7 +48,30 @@ class Transport(object):
         pass
 
 
-class UDPTransport(Transport):
+class SocketTransport(Transport):
+    """Provides common functionality for Transports using sockets"""
+
+    def __init__(self, host='localhost', port=5555):
+        self.host = host
+        self.port = port
+
+    @property
+    def address(self):
+        return self.host, self.port
+
+    @property
+    def socket(self):
+        """Checks that the socket attribute has been created before use"""
+        if not hasattr(self, '_socket'):
+            raise RuntimeError("Transport has not been connected!")
+        return self._socket
+
+    @socket.setter
+    def socket(self, value):
+        self._socket = value
+
+
+class UDPTransport(SocketTransport):
     def connect(self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
@@ -66,7 +83,7 @@ class UDPTransport(Transport):
         return NotImplemented
 
 
-class TCPTransport(Transport):
+class TCPTransport(SocketTransport):
     def connect(self):
         self.socket = socket.create_connection(self.address)
         self.socket.setblocking(True)
