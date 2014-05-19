@@ -10,9 +10,28 @@ import os
 import riemann_client.client
 import riemann_client.transport
 
-TRANSPORT_CLASSES = {
-    'udp': riemann_client.transport.UDPTransport,
-    'tcp': riemann_client.transport.TCPTransport
+__all__ = ['main']
+
+
+def udp_transport_factory(args):
+    return riemann_client.transport.UDPTransport(args.host, args.port)
+
+
+def tcp_transport_factory(args):
+    return riemann_client.transport.TCPTransport(args.host, args.port)
+
+
+def tls_transport_factory(args):
+    if args.ca_certs is None:
+        parser.error('--ca-certs must be set when using the TLS transport')
+    return riemann_client.transport.TLSTransport(
+        args.host, args.port, args.ca_certs)
+
+
+TRANSPORT_FACTORIES = {
+    'udp': udp_transport_factory,
+    'tcp': tcp_transport_factory,
+    'tls': tls_transport_factory
 }
 
 parser = argparse.ArgumentParser(add_help=False, description=(
@@ -42,7 +61,11 @@ parser.add_argument(
     help="The port to connect to the Riemann server on (environ: %(default)s)")
 
 parser.add_argument(
-    '-t', '--transport', choices=TRANSPORT_CLASSES.keys(), default='tcp',
+    '-c', '--ca-certs', type=str, metavar='CERT',
+    help="The path to the CA certificate bundle to use with the TLS transport")
+
+parser.add_argument(
+    '-t', '--transport', choices=TRANSPORT_FACTORIES.keys(), default='tcp',
     help="The transport to use (default: %(default)s)")
 
 subparsers = parser.add_subparsers(dest='subparser')
@@ -86,9 +109,7 @@ send.set_defaults(function=send_function)
 
 
 def query_function(args, client):
-    """Queries the Riemann index and outputs the returned events as JSON
-
-    UDP is not supported when querying"""
+    """Queries the Riemann index and outputs the returned events as JSON"""
     print(json.dumps(client.query(args.query), sort_keys=True, indent=2))
 
 query = subparsers.add_parser('query', help='Query the Riemann index')
@@ -99,13 +120,12 @@ query.set_defaults(function=query_function)
 def main():
     args = parser.parse_args()
 
-    transport_class = TRANSPORT_CLASSES[args.transport]
-    transport = transport_class(args.host, args.port)
+    transport = TRANSPORT_FACTORIES[args.transport](args)
 
     with riemann_client.client.Client(transport=transport) as client:
         try:
             args.function(args, client)
         except riemann_client.transport.RiemannError as exception:
-            print("The Riemann server responded with an error: {}".format(
+            print("The Riemann server responded with an error: {0}".format(
                 exception.message), file=sys.stderr)
             exit(1)

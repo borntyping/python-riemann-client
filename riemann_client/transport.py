@@ -4,6 +4,7 @@ from __future__ import absolute_import
 
 import abc
 import socket
+import ssl
 import struct
 
 import riemann_client.riemann_pb2
@@ -85,3 +86,17 @@ class TCPTransport(Transport):
             raise RiemannError(response.error)
 
         return response
+
+
+class TLSTransport(TCPTransport):
+    def __init__(self, host='localhost', port=5554, ca_certs=None):
+        super(TLSTransport, self).__init__(host, port)
+        self.ca_certs = ca_certs
+
+    def connect(self):
+        super(TLSTransport, self).connect()
+        self.socket = ssl.wrap_socket(
+            self.socket,
+            ssl_version=ssl.PROTOCOL_TLSv1,
+            cert_reqs=ssl.CERT_REQUIRED,
+            ca_certs=self.ca_certs)
