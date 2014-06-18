@@ -79,7 +79,7 @@ def send_function(args, client):
         host=args.event_host,
         description=args.description,
         service=args.service,
-        tags=args.tags,
+        tags=map(str.strip, args.tags.split(',')),
         ttl=args.ttl,
         metric_f=args.metric)
 
@@ -98,7 +98,7 @@ send_arguments = [
     (['-e', '--event-host'], str, "Host"),
     (['-D', '--description'], str, "Description"),
     (['-s', '--service'], str, "Service"),
-    (['-T', '--tags'], list, "Tags"),
+    (['-T', '--tags'], str, "Comma seperated list of tags"),
     (['-l', '--ttl'], int, "Time to live"),
     (['-m', '--metric'], float, "Value")]
 
