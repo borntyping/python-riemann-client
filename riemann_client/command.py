@@ -73,18 +73,20 @@ subparsers = parser.add_subparsers(dest='subparser')
 
 def send_function(args, client):
     """Sends a single command to Riemann"""
-    event = client.event(
-        time=args.time,
-        state=args.state,
-        host=args.event_host,
-        description=args.description,
-        service=args.service,
-        tags=map(str.strip, args.tags.split(',')),
-        ttl=args.ttl,
-        metric_f=args.metric)
+    event = client.create_event({
+        'time': args.time,
+        'state': args.state,
+        'host': args.event_host,
+        'description': args.description,
+        'service': args.service,
+        'tags': map(str.strip, args.tags.split(',')),
+        'ttl': args.ttl,
+        'metric_f': args.metric})
 
     if args.print_message:
         print(str(event).strip())
+
+    client.send_event(event)
 
 send = subparsers.add_parser('send', help='Send an event to Riemann')
 
