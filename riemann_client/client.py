@@ -93,3 +93,6 @@ class QueuedClient(Client):
     def send_event(self, event):
         self.queue.events.add().MergeFrom(event)
         return event
+
+    def clear_queue(self):
+        self.queue = riemann_client.riemann_pb2.Msg()
