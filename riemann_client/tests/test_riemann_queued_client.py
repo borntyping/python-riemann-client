@@ -1,6 +1,7 @@
 from __future__ import absolute_import, unicode_literals
 
 import py.test
+import uuid
 
 import riemann_client.client
 import riemann_client.riemann_pb2
@@ -35,6 +36,21 @@ def large_queue(queued_client):
     return items
 
 
+@py.test.fixture
+def unique():
+    return str(uuid.uuid4())
+
+
+@py.test.fixture
+def event(unique):
+    return riemann_client.client.Client.create_event({
+        'host': 'test.example.com',
+        'tags': [unique],
+        'attributes': {
+            unique: unique
+        }
+    })
+
 def test_simple_queue_event(queued_client, using_simple_queue):
     assert queued_client.queue.events[0].service == 'test'
 
@@ -65,3 +81,9 @@ def test_deciqueue_output(queued_client, large_queue):
 def test_deciqueue_flush(queued_client, large_queue):
     queued_client.flush()
     assert len(queued_client.queue.events) == 0
+
+
+def test_send_many_events(queued_client, event):
+    events = [event for i in range(0, 5)]
+    queued_client.send_event(*events)
+    assert len(queued_client.queue.events) == 5
