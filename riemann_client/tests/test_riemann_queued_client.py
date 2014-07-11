@@ -65,3 +65,8 @@ def test_deciqueue_output(queued_client, large_queue):
 def test_deciqueue_flush(queued_client, large_queue):
     queued_client.flush()
     assert len(queued_client.queue.events) == 0
+
+
+def test_clear_queue(queued_client, using_simple_queue):
+    queued_client.clear_queue()
+    assert len(queued_client.queue.events) == 0
