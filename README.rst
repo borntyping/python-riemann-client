@@ -56,14 +56,18 @@ Requirements
 Changelog
 ---------
 
-Version numbers use the `semver <http://semver.org/>`_ specification. A new major version indicates breaking changes.
+Version numbers use the `semver <http://semver.org/>`_ specification.
 
-Version 3.1.x
+Version 4.x.x
 ^^^^^^^^^^^^^
 
+* Full Riemann protocol support (TLS transport, event attributes)
+* Fixes for multiple broken features (``--tags``, ``--print``)
+* Raise errors when clients are used incorrectly
+* Client displays errors from Riemann nicely
 * Relaxed version requirements to fit CentOS 6 packages
 * ~~Added Makefile and specfile for building RPMs with rpmbuild~~
-* Added Makefile to build RPMs with `fpm <https://github.com/jordansissel/fpm>`_
+* ~~Added Makefile to build RPMs with `fpm <https://github.com/jordansissel/fpm>`_~~
 
 Version 3.0.0
 ^^^^^^^^^^^^^
