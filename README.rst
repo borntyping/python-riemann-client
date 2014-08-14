@@ -18,7 +18,7 @@ Usage
 As a command line tool::
 
 	riemann-client [--host HOST] [--port PORT] send [-s SERVICE] [-S STATE] [-m METRIC] [...]
-	riemann-client [--host HOST] [--port PORT] query '<query>'
+	riemann-client [--host HOST] [--port PORT] query QUERY
 
 The host and port used by the command line tool can also be set with the ``RIEMANN_HOST`` and ``RIEMANN_PORT`` environment variables. By default, ``localhost:5555`` will be used.
 
@@ -57,6 +57,11 @@ Changelog
 ---------
 
 Version numbers use the `semver <http://semver.org/>`_ specification.
+
+Version 5.x.x
+^^^^^^^^^^^^^
+
+* Replaced ``argparse`` with ``click`` for an improved CLI
 
 Version 4.2.x
 ^^^^^^^^^^^^^

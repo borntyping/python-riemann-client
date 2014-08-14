@@ -127,3 +127,21 @@ class TLSTransport(TCPTransport):
             ssl_version=ssl.PROTOCOL_TLSv1,
             cert_reqs=ssl.CERT_REQUIRED,
             ca_certs=self.ca_certs)
+
+
+class BlankTransport(Transport):
+    """A transport that does nothing but store sent messages in local memory
+
+    Used for testing and noop mode
+    """
+    def connect(self):
+        self.messages = []
+
+    def send(self, message):
+        self.messages.append(message)
+        reply = riemann_client.riemann_pb2.Msg()
+        reply.ok = True
+        return reply
+
+    def disconnect(self):
+        del self.messages

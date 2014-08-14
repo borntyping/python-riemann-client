@@ -9,7 +9,7 @@ import riemann_client.transport
 
 
 class Client(object):
-    """An abstract Riemann client"""
+    """A Riemann client"""
 
     def __init__(self, transport=None):
         if transport is None:
