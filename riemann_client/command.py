@@ -35,6 +35,11 @@ class Pair(click.ParamType):
         return key.strip(), value.strip()
 
 
+def echo(data):
+    """Echo a json dump of an object using click"""
+    return click.echo(json.dumps(data, sort_keys=True, indent=2))
+
+
 @click.group()
 @click.version_option(version=riemann_client.__version__)
 @click.option('--host', '-H', type=click.STRING, envvar='RIEMANN_HOST',
@@ -95,11 +100,9 @@ def main(ctx, host, port, transport_type, timeout, ca_certs):
               help="Event attribute (key=value, multiple)")
 @click.option('-m', '--metric', '--metric_f', type=click.FLOAT,
               help="Event metric (uses metric_f)")
-@click.option('--print/--no-print', '-p', 'print_event',
-              help="Print the sent event")
 @click.pass_obj
 def send(transport, time, state, host, description, service, tag, attribute,
-         ttl, metric_f, print_event):
+         ttl, metric_f):
     """Send a single event to Riemann"""
     client = CommandLineClient(transport)
     event = client.create_event({
@@ -114,11 +117,10 @@ def send(transport, time, state, host, description, service, tag, attribute,
         'metric_f': metric_f
     })
 
-    if print_event:
-        click.echo(str(event).strip())
-
     with client:
         client.send_event(event)
+
+    echo(client.create_dict(event))
 
 
 @main.command()
@@ -127,4 +129,4 @@ def send(transport, time, state, host, description, service, tag, attribute,
 def query(transport, query):
     """Query the Riemann server"""
     with CommandLineClient(transport) as client:
-        click.echo(json.dumps(client.query(query), sort_keys=True, indent=2))
+        echo(client.query(query))

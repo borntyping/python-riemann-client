@@ -62,6 +62,7 @@ Version 5.x.x
 ^^^^^^^^^^^^^
 
 * Replaced ``argparse`` with ``click`` for an improved CLI
+* ``send`` always prints the sent event (removed ``--print``)
 
 Version 4.2.x
 ^^^^^^^^^^^^^
