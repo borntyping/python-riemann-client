@@ -39,14 +39,23 @@ class Client(object):
                 setattr(event, name, value)
         return event
 
-    def send_event(self, event):
-        """Wraps an event in a message and sends it to Riemann"""
+    def send_events(self, events):
+        """Wraps a list of events in a message and sends them to Riemann"""
         message = riemann_client.riemann_pb2.Msg()
-        message.events.add().MergeFrom(event)
+        for event in events:
+            message.events.add().MergeFrom(event)
         return self.transport.send(message)
 
+    def send_event(self, event):
+        """Sends a single event to Riemann using send_events()"""
+        return self.send_events((event,))
+
+    def events(self, *events):
+        """Sends multiple events, calling create_event() on each dict passed"""
+        return self.send_events(self.create_event(e) for e in events)
+
     def event(self, **data):
-        """Sends an event"""
+        """Sends an event, using keyword arguments to create an Event"""
         return self.send_event(self.create_event(data))
 
     @staticmethod

@@ -63,6 +63,15 @@ class TestClient(object):
         with py.test.raises(Exception):
             client.query('true')
 
+    def test_events(self, client):
+        message = client.events({'service': 'one'}, {'service': 'two'})
+        assert message.events[0].service == 'one'
+        assert message.events[1].service == 'two'
+
+    def test_events_len(self, client):
+        message = client.events({'service': 'one'}, {'service': 'two'})
+        assert len(message.events) == 2
+
 
 @py.test.fixture
 def event(unique):
