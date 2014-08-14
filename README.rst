@@ -58,7 +58,14 @@ Changelog
 
 Version numbers use the `semver <http://semver.org/>`_ specification.
 
-Version 4.x.x
+Version 4.2.x
+^^^^^^^^^^^^^
+
+* Added ``events()`` and ``send_events()`` methods to the client
+* Added ``clear_queue()`` method to the queued client
+* Add ``--timeout`` option for TCP based transports
+
+Version 4.1.x
 ^^^^^^^^^^^^^
 
 * Full Riemann protocol support (TLS transport, event attributes)
@@ -66,10 +73,14 @@ Version 4.x.x
 * Raise errors when clients are used incorrectly
 * Client displays errors from Riemann nicely
 * Relaxed version requirements to fit CentOS 6 packages
+
+Version 4.0.x
+^^^^^^^^^^^^^
+
 * ~~Added Makefile and specfile for building RPMs with rpmbuild~~
 * ~~Added Makefile to build RPMs with `fpm <https://github.com/jordansissel/fpm>`_~~
 
-Version 3.0.0
+Version 3.0.x
 ^^^^^^^^^^^^^
 
 * Renamed module from ``riemann`` to ``riemann_client``
