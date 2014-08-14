@@ -14,11 +14,14 @@ __all__ = ['main']
 
 
 def udp_transport_factory(args):
+    if args.timeout is not None:
+        parser.error('--timeout cannot be used with the UDP transport')
     return riemann_client.transport.UDPTransport(args.host, args.port)
 
 
 def tcp_transport_factory(args):
-    return riemann_client.transport.TCPTransport(args.host, args.port)
+    return riemann_client.transport.TCPTransport(
+        args.host, args.port, args.timeout)
 
 
 def tls_transport_factory(args):
@@ -68,6 +71,10 @@ parser.add_argument(
     '-t', '--transport', choices=TRANSPORT_FACTORIES.keys(), default='tcp',
     help="The transport to use (default: %(default)s)")
 
+parser.add_argument(
+    '-T', '--timeout', type=float,
+    help="Timeout for TCP connections (default: %(default)s)")
+
 subparsers = parser.add_subparsers(dest='subparser')
 
 
@@ -79,7 +86,7 @@ def send_function(args, client):
         'host': args.event_host,
         'description': args.description,
         'service': args.service,
-        'tags': map(str.strip, args.tags.split(',')),
+        'tags': args.tags and map(str.strip, args.tags.split(',')),
         'ttl': args.ttl,
         'metric_f': args.metric})
 

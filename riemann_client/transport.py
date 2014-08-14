@@ -10,6 +10,12 @@ import struct
 import riemann_client.riemann_pb2
 
 
+# Default arguments
+HOST = 'localhost'
+PORT = 5555
+TIMEOUT = None
+
+
 def socket_recvall(socket, length, bufsize=4096):
     """Recives bytes from a socket until the buffer is the requested length"""
     data = ""
@@ -51,7 +57,7 @@ class Transport(object):
 class SocketTransport(Transport):
     """Provides common functionality for Transports using sockets"""
 
-    def __init__(self, host='localhost', port=5555):
+    def __init__(self, host=HOST, port=PORT):
         self.host = host
         self.port = port
 
@@ -74,6 +80,7 @@ class SocketTransport(Transport):
 class UDPTransport(SocketTransport):
     def connect(self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.socket.settimeout(self.timeout)
 
     def disconnect(self):
         self.socket.close()
@@ -84,9 +91,12 @@ class UDPTransport(SocketTransport):
 
 
 class TCPTransport(SocketTransport):
+    def __init__(self, host=HOST, port=PORT, timeout=TIMEOUT):
+        super(TCPTransport, self).__init__(host, port)
+        self.timeout = timeout
+
     def connect(self):
-        self.socket = socket.create_connection(self.address)
-        self.socket.setblocking(True)
+        self.socket = socket.create_connection(self.address, self.timeout)
 
     def disconnect(self):
         self.socket.close()
@@ -106,8 +116,8 @@ class TCPTransport(SocketTransport):
 
 
 class TLSTransport(TCPTransport):
-    def __init__(self, host='localhost', port=5554, ca_certs=None):
-        super(TLSTransport, self).__init__(host, port)
+    def __init__(self, host=HOST, port=PORT, timeout=TIMEOUT, ca_certs=None):
+        super(TLSTransport, self).__init__(host, port, timeout)
         self.ca_certs = ca_certs
 
     def connect(self):
