@@ -27,6 +27,10 @@ def unique():
     return str(uuid.uuid4())
 
 
+def test_default_transport():
+    assert riemann_client.client.Client()
+
+
 class TestClient(object):
     def test_service(self, client):
         client.event(service='test event')
