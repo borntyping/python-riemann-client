@@ -42,11 +42,11 @@ def echo(data):
 
 @click.group()
 @click.version_option(version=riemann_client.__version__)
-@click.option('--host', '-H', type=click.STRING, envvar='RIEMANN_HOST',
-              help='Riemann server hostname.')
-@click.option('--port', '-P', type=click.INT, envvar='RIEMANN_PORT',
-              help='Riemann server port.')
-@click.option('--transport', '-T', 'transport_type',
+@click.option('--host', '-H', type=click.STRING, default='localhost',
+              envvar='RIEMANN_HOST', help='Riemann server hostname.')
+@click.option('--port', '-P', type=click.INT, default=5555,
+              envvar='RIEMANN_PORT', help='Riemann server port.')
+@click.option('--transport', '-T', 'transport_type', default='tcp',
               type=click.Choice(['udp', 'tcp', 'tls', 'none']),
               help='The protocol to use to connect to Riemann.')
 @click.option('--timeout', '-I', type=click.FLOAT, default=None,
