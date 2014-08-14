@@ -92,12 +92,12 @@ class QueuedClient(Client):
 
     def __init__(self, *args, **kwargs):
         super(QueuedClient, self).__init__(*args, **kwargs)
-        self.queue = riemann_client.riemann_pb2.Msg()
+        self.clear_queue()
 
     def flush(self):
         """Sends the waiting message to Riemann"""
         self.transport.send(self.queue)
-        self.queue = riemann_client.riemann_pb2.Msg()
+        self.clear_queue()
 
     def send_event(self, event):
         self.queue.events.add().MergeFrom(event)
