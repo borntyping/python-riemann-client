@@ -13,9 +13,7 @@ riemann-client
 
 |
 
-A `Riemann <http://riemann.io/>`_ client library and command line tool for Python. It supports UDP and TCP transports, queries, and all metric types. However, it does not currently support event attributes or a SSL TCP transport.
-
-The client library aims to provide a simple, minimal API does not require direct interaction with protocol buffers (though it does allow using the protobuf API directly, allowing you to use unsupported features such as event attributes). There is also a queued client that can queue events and then send in a single message.
+A `Riemann <http://riemann.io/>`_ client library and command line tool for Python. It supports UDP and TCP transports, queries, and all metric types. The client library aims to provide a simple, minimal API does not require direct interaction with protocol buffers. There is also a queued client that can queue or batch events and then send them in a single message.
 
 Usage
 -----
@@ -61,13 +59,11 @@ Installation
 Requirements
 ^^^^^^^^^^^^
 
-* `argparse <https://pypi.python.org/pypi/argparse>`_
+* `click <http://click.pocoo.org/>`_
 * `protobuf <https://pypi.python.org/pypi/protobuf>`_
 
 Changelog
 ---------
-
-Version numbers use the `semver <http://semver.org/>`_ specification.
 
 Version 5.x.x
 ^^^^^^^^^^^^^
