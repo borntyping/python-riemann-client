@@ -2,15 +2,16 @@
 riemann-client
 ==============
 
-.. image:: https://pypip.in/v/riemann-client/badge.png
+.. image:: http://img.shields.io/pypi/v/riemann-client.svg?style=flat-square
     :target: https://pypi.python.org/pypi/riemann-client
 
-.. image:: https://travis-ci.org/borntyping/python-riemann-client.png?branch=master
+.. image:: http://img.shields.io/pypi/l/riemann-client.svg?style=flat-square
+    :target: https://pypi.python.org/pypi/riemann-client
+
+.. image:: http://img.shields.io/travis/borntyping/python-riemann-client/master.svg?style=flat-square
     :target: https://travis-ci.org/borntyping/python-riemann-client
 
-.. image:: https://readthedocs.org/projects/riemann-client/badge/?version=latest
-	:target: https://readthedocs.org/projects/riemann-client/?badge=latest
-	:alt: Documentation Status
+|
 
 A `Riemann <http://riemann.io/>`_ client library and command line tool for Python. It supports UDP and TCP transports, queries, and all metric types. However, it does not currently support event attributes or a SSL TCP transport.
 
