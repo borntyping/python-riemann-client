@@ -24,3 +24,4 @@ extensions = [
     'sphinx.ext.viewcode'
 ]
 autodoc_member_order = 'bysource'
+autoclass_content = 'both'

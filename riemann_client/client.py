@@ -1,6 +1,4 @@
-"""Riemann client implementations
-
-Clients manage the main user facing API, and provide functions for sending
+"""Clients manage the main user facing API, and provide functions for sending
 events and querying the Riemann server. UDP, TCP and TLS transports are
 provided by the :py:mod:`riemann_client.transport` module, and the protocol
 buffer objects are provided by the :py:mod:`riemann_client.riemann_pb2` moudle.
