@@ -8,6 +8,10 @@ riemann-client
 .. image:: https://travis-ci.org/borntyping/python-riemann-client.png?branch=master
     :target: https://travis-ci.org/borntyping/python-riemann-client
 
+.. image:: https://readthedocs.org/projects/riemann-client/badge/?version=latest
+	:target: https://readthedocs.org/projects/riemann-client/?badge=latest
+	:alt: Documentation Status
+
 A `Riemann <http://riemann.io/>`_ client library and command line tool for Python. It supports UDP and TCP transports, queries, and all metric types. However, it does not currently support event attributes or a SSL TCP transport.
 
 The client library aims to provide a simple, minimal API does not require direct interaction with protocol buffers (though it does allow using the protobuf API directly, allowing you to use unsupported features such as event attributes). There is also a queued client that can queue events and then send in a single message.
@@ -27,7 +31,7 @@ As a library::
 	import riemann_client.client
 
 	with riemann_client.client.Client() as client:
-		client.event(service='riemann-client', state='awesome')
+		client.event(service="riemann-client", state="awesome")
 		client.query("service = 'riemann-client'")
 
 A more detailed example, using both a non-default transport and a queued client::
@@ -35,12 +39,18 @@ A more detailed example, using both a non-default transport and a queued client:
 	from riemann_client.transport import TCPTransport
 	from riemann_client.client import QueuedClient
 
-	with QueuedClient(TCPTransport('localhost', 5555)) as client:
-		client.event(service='one', metric_f=1)
-		client.event(service='two', metric_f=2)
+	with QueuedClient(TCPTransport("localhost", 5555)) as client:
+		client.event(service="one", metric_f=0.1)
+		client.event(service="two", metric_f=0.2)
 		client.flush()
 
 The ``QueuedClient`` class modifies the ``event()`` method to add events to a queue instead of immediately sending them, and adds the ``flush()`` method to send the current event queue as a single message.
+
+.. toctree::
+   :hidden:
+
+   riemann-client client API <riemann_client.client>
+   riemann-client transport API <riemann_client.transport>
 
 Installation
 ------------
@@ -63,6 +73,7 @@ Version 5.x.x
 
 * Replaced ``argparse`` with ``click`` for an improved CLI
 * ``send`` always prints the sent event (removed ``--print``)
+* Added API documentation
 
 Version 4.2.x
 ^^^^^^^^^^^^^
@@ -80,17 +91,11 @@ Version 4.1.x
 * Client displays errors from Riemann nicely
 * Relaxed version requirements to fit CentOS 6 packages
 
-Version 4.0.x
-^^^^^^^^^^^^^
-
-* ~~Added Makefile and specfile for building RPMs with rpmbuild~~
-* ~~Added Makefile to build RPMs with `fpm <https://github.com/jordansissel/fpm>`_~~
-
 Version 3.0.x
 ^^^^^^^^^^^^^
 
 * Renamed module from ``riemann`` to ``riemann_client``
-* Command line interface was rewritten, and is now the only part of the library that respects the RIEMANN_HOST and RIEMANN_PORT environment variables
+* Command line interface was rewritten, and is now the only part of the library that respects the ``RIEMANN_HOST`` and ``RIEMANN_PORT`` environment variables
 * Support for querying the Riemann index was added
 * Internally, transports now define ``send`` instead of ``write``, and ``TCPTransport.send`` returns Riemann's response message
 

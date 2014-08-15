@@ -21,6 +21,13 @@ setuptools.setup(
         'protobuf>=2.3.0',
     ],
 
+    extras_require={
+        'docs': [
+            'sphinx',
+            'sphinx_rtd_theme'
+        ]
+    },
+
     entry_points={
         'console_scripts': [
             'riemann-client = riemann_client.command:main',
