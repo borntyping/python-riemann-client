@@ -187,7 +187,7 @@ class QueuedClient(Client):
 
         :returns: None - nothing has been sent to the Riemann server yet
         """
-        self.send_events(event)
+        self.send_events((event,))
         return None
 
     def send_events(self, events):
