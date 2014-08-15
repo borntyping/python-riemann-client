@@ -56,7 +56,7 @@ The ``QueuedClient`` class modifies the ``event()`` method to add events to a qu
 Installation
 ------------
 
-``riemann-client`` requires Python 2.6 or 2.7, and can be installed with ``pip install riemann-client``. Python 3 is not supported due to the dependency on the Google `protobuf <https://pypi.python.org/pypi/protobuf>`_ package. You can also use the provided makefile to build and distribute an RPM using [fpm](https://github.com/jordansissel/fpm).
+``riemann-client`` requires Python 2.6 or 2.7, and can be installed with ``pip install riemann-client``. Python 3 is not supported due to the dependency on the Google `protobuf <https://pypi.python.org/pypi/protobuf>`_ package. You can also use the provided makefile to build and distribute an RPM using `fpm <https://github.com/jordansissel/fpm>`_.
 
 Requirements
 ^^^^^^^^^^^^
@@ -72,7 +72,7 @@ Version numbers use the `semver <http://semver.org/>`_ specification.
 Version 5.x.x
 ^^^^^^^^^^^^^
 
-* Added API documentation (`riemann-client.readthedocs.org <http://riemann-client.readthedocs.org/en/latest/>_`)
+* Added API documentation (`riemann-client.readthedocs.org <http://riemann-client.readthedocs.org/en/latest/>`_)
 * Replaced ``argparse`` with ``click`` for an improved CLI
 * ``send`` always prints the sent event (removed ``--print``)
 * Minor fixes to QueuedClient API
