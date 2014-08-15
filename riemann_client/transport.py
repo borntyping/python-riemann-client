@@ -102,10 +102,10 @@ class UDPTransport(SocketTransport):
     def send(self, message):
         """Sends a message, but does not return a response
 
-        :rtype: NotImplemented
+        :returns: None - can't receive a response over UDP
         """
         self.socket.sendto(message.SerializeToString(), self.address)
-        return NotImplemented
+        return None
 
 
 class TCPTransport(SocketTransport):

@@ -77,7 +77,8 @@ Version 5.x.x
 * Various command line parameters changed
 * ``--event-host`` became ``--host``
 * ``--print`` was removed, ``send`` always prints the sent event
-* Minor fixes to QueuedClient API
+* Minor fixes to ``QueuedClient`` API
+* ``UDPTransport.send`` returns ``None`` instead of ``NotImplemented``
 
 Version 4.2.x
 ^^^^^^^^^^^^^
