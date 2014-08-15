@@ -71,9 +71,10 @@ Version numbers use the `semver <http://semver.org/>`_ specification.
 Version 5.x.x
 ^^^^^^^^^^^^^
 
+* Added API documentation (`riemann-client.readthedocs.org <http://riemann-client.readthedocs.org/en/latest/>_`)
 * Replaced ``argparse`` with ``click`` for an improved CLI
 * ``send`` always prints the sent event (removed ``--print``)
-* Added API documentation
+* Minor fixes to QueuedClient API
 
 Version 4.2.x
 ^^^^^^^^^^^^^
