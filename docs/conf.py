@@ -2,6 +2,8 @@
 
 import os
 
+import riemann_client
+
 if not os.environ.get('READTHEDOCS', None):
     import sphinx_rtd_theme
     html_theme = 'sphinx_rtd_theme'
@@ -12,9 +14,8 @@ exclude_patterns = ['_build']
 
 # General information about the project.
 project = u'riemann-client'
-copyright = u'2014, Sam Clements'
-version = '5.0'
-release = '5.0.0-dev'
+copyright = u'2014, ' + riemann_client.__author__
+version = release = riemann_client.__version__
 
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom ones.

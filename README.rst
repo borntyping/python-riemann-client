@@ -58,18 +58,26 @@ The ``QueuedClient`` class modifies the ``event()`` method to add events to a qu
 Installation
 ------------
 
-``riemann-client`` requires Python 2.6 or 2.7, and can be installed with ``pip install riemann-client``. Python 3 is not supported due to the dependency on the Google `protobuf <https://pypi.python.org/pypi/protobuf>`_ package. You can also use the provided makefile to build and distribute an RPM using `fpm <https://github.com/jordansissel/fpm>`_.
+``riemann-client`` requires Python 2.6 or above, and can be installed with ``pip install riemann-client``. It will use Google's `protobuf <https://pypi.python.org/pypi/protobuf>`_ library when running under Python 2, and `GreatFruitOmsk <https://github.com/GreatFruitOmsk>`_'s `protobuf-py3 <https://pypi.python.org/pypi/protobuf-py3>`_ when running under Python 3. Python 3 support is experimental and is likley to use Google's `protobuf` once it supports Python 3 fully.
 
 Requirements
 ^^^^^^^^^^^^
 
 * `click <http://click.pocoo.org/>`_
-* `protobuf <https://pypi.python.org/pypi/protobuf>`_
+* `protobuf <https://pypi.python.org/pypi/protobuf>`_ (when using Python 2)
+* `protobuf <https://pypi.python.org/pypi/protobuf-py3>`_ (when using Python 3)
 
 Changelog
 ---------
 
-Version 5.x.x
+Version 5.1.0
+^^^^^^^^^^^^^
+
+* Added Python 3 support
+* Changed ``riemann_client.riemann_pb2`` to wrap ``_py2`` and ``_py3`` modules
+* Changed ``setup.py`` to dynamically select a ``protobuf`` dependency
+
+Version 5.0.x
 ^^^^^^^^^^^^^
 
 * Added API documentation (`riemann-client.readthedocs.org <http://riemann-client.readthedocs.org/en/latest/>`_)

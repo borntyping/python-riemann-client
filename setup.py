@@ -1,10 +1,19 @@
 #!/usr/bin/env python2.6
 
+import sys
+
 import setuptools
+
+if sys.version_info >= (3,):
+    protobuf = 'protobuf-py3>=2.5.1,<3.0.0'
+else:
+    protobuf = 'protobuf>=2.3.0,<3.0.0'
+
+print('Installing', protobuf)
 
 setuptools.setup(
     name='riemann-client',
-    version='5.0.1',
+    version='5.1.0',
 
     author="Sam Clements",
     author_email="sam.clements@datasift.com",
@@ -18,7 +27,7 @@ setuptools.setup(
 
     install_requires=[
         'click>=3.1,<4.0',
-        'protobuf>=2.3.0,<3.0.0',
+        protobuf
     ],
 
     extras_require={

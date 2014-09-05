@@ -1,6 +1,7 @@
 from __future__ import absolute_import, unicode_literals
 
 import socket
+import sys
 import uuid
 
 import py.test
@@ -8,6 +9,9 @@ import py.test
 import riemann_client.client
 import riemann_client.riemann_pb2
 import riemann_client.transport
+
+if sys.version_info >= (3,):
+    basestring = str
 
 
 @py.test.fixture
