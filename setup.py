@@ -9,8 +9,6 @@ if sys.version_info >= (3,):
 else:
     protobuf = 'protobuf>=2.3.0,<3.0.0'
 
-print('Installing', protobuf)
-
 setuptools.setup(
     name='riemann-client',
     version='5.1.0',
