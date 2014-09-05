@@ -20,7 +20,7 @@ TIMEOUT = None
 
 def socket_recvall(socket, length, bufsize=4096):
     """A helper method to read of bytes from a socket to a maximum length"""
-    data = ""
+    data = b""
     while len(data) < length:
         data += socket.recv(bufsize)
     return data
