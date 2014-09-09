@@ -3,6 +3,9 @@ env:
   - TOXENV=py26
   - TOXENV=py26-flake8
   - TOXENV=py27
+  - TOXENV=py33
+  - TOXENV=py34
+  - TOXENV=py34-flake8
   - TOXENV=docs
 install:
   - pip install tox
