@@ -1,0 +1,90 @@
+.\"                                      Hey, EMACS: -*- nroff -*-
+.\" First parameter, NAME, should be all caps
+.\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
+.\" other parameters are allowed: see man(7), man(1)
+.TH RIEMANN-CLIENT 1 "2014-10-12"
+.\" Please adjust this date whenever revising the manpage.
+.\"
+.\" Some roff macros, for reference:
+.\" .nh        disable hyphenation
+.\" .hy        enable hyphenation
+.\" .ad l      left justify
+.\" .ad b      justify to both left and right margins
+.\" .nf        disable filling
+.\" .fi        enable filling
+.\" .br        insert line break
+.\" .sp <n>    insert n+1 empty lines
+.\" for manpage-specific macros, see man(7)
+.SH NAME
+riemann-client \- Connects to a Riemann server to send events or query the index
+.SH SYNOPSIS
+.B riemann-client
+.RI [CONNECTION_PARAMETERS]
+.RI send
+.RI [EVENT_PARAMETERS]
+.br
+.B riemann-client
+.RI [CONNECTION_PARAMETERS]
+.RI query
+.RI [QUERY]
+.SH DESCRIPTION
+This manual page documents briefly the
+.B rieman-client
+command.
+.PP
+.\" TeX users may be more comfortable with the \fB<whatever>\fP and
+.\" \fI<whatever>\fP escape sequences to invode bold face and italics,
+.\" respectively.
+.SH OPTIONS
+.SS Query parameters
+.TP
+.B \-H, \-\-host
+Riemann server hostname.
+.TP
+.B \-P, \-\-port
+Riemann server port
+.TP
+.B \-T, \-\-transport
+The protocol to use to connect to Riemann.
+.TP
+.B \-I, \-\-timeout
+Timeout for TCP based connections.
+.TP
+.B \-C, \-\-ca-certs
+A CA certificate bundle for TLS connections.
+.br
+.SS Event parameters
+.TP
+.B \-T, \-\-time
+Event timestamp (unix format)
+.TP
+.B \-S, \-\-state
+Event state
+.TP
+.B \-s, \-\-service
+Event service name
+.TP
+.B \-h, \-\-host
+Event hostname (uses system's by default)
+.TP
+.B \-d, \-\-description
+Event description
+.TP
+.B \-t, \-\-tag
+Event tag (multiple)
+.TP
+.B \-l, \-\-tt1
+Event time to live in seconds
+.TP
+.B \-a, \-\-attr, \-\-attribute
+Event attribute (key=value, multiple)
+.TP
+.B \-m, \-\-metric, \-\-metric_f
+Event metric (uses metric_f)
+.SH AUTHOR
+python-riemann-client was written by Sam Clements <sam@borntyping.co.uk>.
+.br
+
+.PP
+This manual page was written by Alexandre Viau <alexandre@alexandreviau.net>,
+for the Debian project (and may be used by others).
