@@ -21,7 +21,10 @@ setuptools.setup(
     long_description=open('README.rst').read(),
     license="MIT",
 
-    packages=setuptools.find_packages(),
+    packages=[
+        'riemann_client',
+        'riemann_client.tests'
+    ],
 
     install_requires=[
         'click>=3.1,<4.0',
