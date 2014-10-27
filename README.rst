@@ -13,7 +13,7 @@ riemann-client
 
 |
 
-A `Riemann <http://riemann.io/>`_ client library and command line tool for Python. It supports UDP and TCP transports, queries, and all metric types. The client library aims to provide a simple, minimal API does not require direct interaction with protocol buffers. There is also a queued client that can queue or batch events and then send them in a single message.
+A `Riemann <http://riemann.io/>`_ client library and command line tool for Python. It supports UDP and TCP transports, queries, and all metric types. The client library aims to provide a simple, minimal API, and does not require direct interaction with protocol buffers. There is also a queued client that can queue or batch events and then send them in a single message.
 
 * `Source on GitHub <https://github.com/borntyping/python-riemann-client>`_
 * `Documentation on Read the Docs <http://riemann-client.readthedocs.org/en/latest/>`_
