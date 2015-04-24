@@ -70,6 +70,12 @@ Requirements
 Changelog
 ---------
 
+Version 6.0.0
+^^^^^^^^^^^^^
+
+* ``riemann_client.client.Client.create_dict`` only returns event fields that are set on the Protocol Buffers ``Event`` object
+* ``riemann-client send ...``` only outputs fields that were set on the sent message
+
 Version 5.1.0
 ^^^^^^^^^^^^^
 

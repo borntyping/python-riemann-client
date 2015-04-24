@@ -124,19 +124,17 @@ class Client(object):
         :param event: A protocol buffer ``Event`` object
         :returns: A dictionary of event attributes
         """
-        return {
-            'time': event.time,
-            'state': event.state,
-            'host': event.host,
-            'description': event.description,
-            'service': event.service,
-            'tags': list(event.tags),
-            'ttl': event.ttl,
-            'attributes': dict(((a.key, a.value) for a in event.attributes)),
-            'metric_f': event.metric_f,
-            'metric_d': event.metric_d,
-            'metric_sint64': event.metric_sint64
-        }
+
+        data = dict()
+
+        for descriptor, value in event.ListFields():
+            if descriptor.name == 'tags':
+                value = list(value)
+            elif descriptor.name == 'attributes':
+                value = dict(((a.key, a.value) for a in value))
+            data[descriptor.name] = value
+
+        return data
 
     def send_query(self, query):
         """Sends a query to the Riemann server

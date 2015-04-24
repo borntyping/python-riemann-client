@@ -16,34 +16,16 @@ def run_cli(args):
     return result
 
 
-def strip_whitespace(string):
+def strip(string):
     return re.sub('\s+', '', string)
 
 
-def compare_output(args, expected):
-    output = strip_whitespace(run_cli(args).output)
-    expected_output = strip_whitespace(expected)
-    return output == expected_output
+def assert_output_eq(args, expected):
+    assert strip(run_cli(args).output) == strip(expected)
 
 
-EMPTY_MESSAGE = """{
-  "attributes": {},
-  "description": "",
-  "host": "%s",
-  "metric_d": 0,
-  "metric_f": 0,
-  "metric_sint64": 0,
-  "service": "",
-  "state": "",
-  "tags": [],
-  "time": 0,
-  "ttl": 0
-}
-"""
-
-
-def test_send_blank():
-    assert compare_output(['send'], EMPTY_MESSAGE % socket.gethostname())
+def test_send_empty_message():
+    assert_output_eq(['send'], '{"host": "%s"}' % socket.gethostname())
 
 
 POPULATED_MESSAGE = """{
@@ -52,9 +34,7 @@ POPULATED_MESSAGE = """{
   },
   "description": "description",
   "host": "%s",
-  "metric_d": 0,
   "metric_f": 11.1,
-  "metric_sint64": 0,
   "service": "service",
   "state": "state",
   "tags": [
@@ -63,11 +43,11 @@ POPULATED_MESSAGE = """{
   "time": 1408030991,
   "ttl": 120
 }
-"""
+""" % socket.gethostname()
 
 
 def test_send():
-    assert compare_output([
+    assert_output_eq([
         'send',
         '--attribute', 'key=value',
         '--description', 'description',
@@ -77,11 +57,11 @@ def test_send():
         '--tag', 'tag',
         '--time', '1408030991',
         '--ttl', '120'
-    ], POPULATED_MESSAGE % socket.gethostname())
+    ], POPULATED_MESSAGE)
 
 
 def test_send_short():
-    assert compare_output([
+    assert_output_eq([
         'send',
         '-a', 'key=value',
         '-d', 'description',
@@ -91,8 +71,8 @@ def test_send_short():
         '-t', 'tag',
         '-T', '1408030991',
         '-l', '120'
-    ], POPULATED_MESSAGE % socket.gethostname())
+    ], POPULATED_MESSAGE)
 
 
 def test_query():
-    assert compare_output(['query', 'true'], '[]')
+    assert_output_eq(['query', 'true'], '[]')
