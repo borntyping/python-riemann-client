@@ -68,7 +68,8 @@ class Client(object):
         :returns: A protocol buffer ``Event`` object
         """
         event = riemann_client.riemann_pb2.Event()
-        event.host = socket.gethostname()
+        if not 'host' in data:
+            event.host = socket.gethostname()
         event.tags.extend(data.pop('tags', []))
 
         for key, value in data.pop('attributes', {}).items():
@@ -208,19 +209,21 @@ class QueuedClient(Client):
 
 
 class AutoFlushingQueuedClient(QueuedClient):
-    """A Riemann client using a queue that can be used to batch send events,
-    and a timer to automatically flush its queue to Riemann within a
-    bounded time period.
+    """A Riemann client using a queue and a timer that will automatically
+    flush its contents if either the queue size exceeds `max_batch_size`
+    or more than `max_delay` has elapsed since the last flush and the
+    queue is non-empty.
     
     A message object is used as a queue, with the :py:meth:`.send_event` and
     :py:meth:`.send_events` methods adding new events to the message,
     :py:meth`.event` and :py:meth`.events` methods adding new events
-     to the queue from dictionaries, and the
-    :py:meth:`.flush` sending the message.
+    to the queue from dictionaries, as well as :py:meth:`.flush` 
+    sending the message to its destination.
     """
     
     def __init__(self, transport, max_delay=0.5, max_batch_size=100,
                  stay_connected=False):
+        """
         super(AutoFlushingQueuedClient, self).__init__(transport)
         self.stay_connected = stay_connected
         self.max_delay = max_delay
