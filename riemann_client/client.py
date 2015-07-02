@@ -245,11 +245,11 @@ class SelfDischargingQueuedClient(QueuedClient):
         except (AttributeError, RuntimeError, socket.error):
             return False
     
-    def event(self, event_dict):
-        self.send_events((self.create_event(event_dict.copy()),))
+    def event(self, **data):
+        self.send_events((self.create_event(data),))
     
-    def events(self, event_dicts):
-        self.send_events(self.create_event(evd.copy()) for evd in event_dicts)
+    def events(self, *events):
+        self.send_events(self.create_event(evd) for evd in events)
     
     def send_event(self, event):
         self.send_events((event,))
@@ -265,24 +265,24 @@ class SelfDischargingQueuedClient(QueuedClient):
         with self.lock:
             if not self.is_connected():
                 self.connect()
-            super(SelfDischargingQueuedClient, self).flush()
+            response = super(SelfDischargingQueuedClient, self).flush()
             self.event_counter = 0
             if not self.stay_connected:
                 self.disconnect()
             self.last_flush = time.time()
         self.start_timer()
+        return response
     
     def check_for_flush(self):
         if (self.event_counter >= self.max_batch_size or
             (time.time() - self.last_flush) >= self.max_delay):
             self.flush()
-        else:
-            print
     
     def start_timer(self):
         if self.timer:
             self.timer.cancel()
         self.timer = Timer(self.max_delay, self.check_for_flush)
+        self.timer.daemon = True
         self.timer.start()
         
     def stop_timer(self):
