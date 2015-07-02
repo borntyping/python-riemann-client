@@ -207,7 +207,7 @@ class QueuedClient(Client):
         self.queue = riemann_client.riemann_pb2.Msg()
 
 
-class SelfDischargingQueuedClient(QueuedClient):
+class AutoFlushingQueuedClient(QueuedClient):
     """A Riemann client using a queue that can be used to batch send events,
     and a timer to automatically flush its queue to Riemann within a
     bounded time period.
@@ -221,7 +221,7 @@ class SelfDischargingQueuedClient(QueuedClient):
     
     def __init__(self, transport, max_delay=0.5, max_batch_size=100,
                  stay_connected=False):
-        super(SelfDischargingQueuedClient, self).__init__(transport)
+        super(AutoFlushingQueuedClient, self).__init__(transport)
         self.stay_connected = stay_connected
         self.max_delay = max_delay
         self.max_batch_size = max_batch_size
@@ -265,7 +265,7 @@ class SelfDischargingQueuedClient(QueuedClient):
         with self.lock:
             if not self.is_connected():
                 self.connect()
-            response = super(SelfDischargingQueuedClient, self).flush()
+            response = super(AutoFlushingQueuedClient, self).flush()
             self.event_counter = 0
             if not self.stay_connected:
                 self.disconnect()
