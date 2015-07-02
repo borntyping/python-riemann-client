@@ -196,7 +196,7 @@ class BlankTransport(Transport):
 
     def disconnect(self):
         """Clears the list of messages"""
-        del self.messages
+        pass
 
     def __len__(self):
         return len(self.messages)
