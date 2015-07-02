@@ -52,14 +52,14 @@ def self_discharging_queued_client_delay1(request, blank_transport):
 
 
 @py.test.fixture
-def self_discharging_queued_client_batch1(request, blank_transport):
+def self_discharging_queued_client_batch5(request, blank_transport):
     """A Riemann client using the StringIO transport and 
     SelfDischargingQueuedClient with max_delay=300 and
-    max_batch_size=1"""
+    max_batch_size=5"""
     client = riemann_client.client.SelfDischargingQueuedClient(
         transport=blank_transport,
         max_delay=300,
-        max_batch_size=1,
+        max_batch_size=5,
         stay_connected=True)
     client.transport.connect()
 
@@ -110,11 +110,9 @@ def test_deciqueue_output(self_discharging_queued_client, large_queue):
     self_discharging_queued_client.flush()
     # note that these will be ordered, and all events will be in a single 
     # protobuf flush, so we can find them in messages[0] 
-    print len(self_discharging_queued_client.transport.messages[0].events)
     for idx, description in enumerate(large_queue):
         assert (description == self_discharging_queued_client.
-                               transport.messages[0].events[idx].
-                               description)
+                               transport.messages[idx].description)
 
 
 def test_deciqueue_flush(self_discharging_queued_client, large_queue):
@@ -127,24 +125,23 @@ def test_clear_queue(self_discharging_queued_client, using_simple_queue):
     assert len(self_discharging_queued_client.queue.events) == 0
 
 
-def test_batchsize1_flush(self_discharging_queued_client_batch1):
-    self_discharging_queued_client = self_discharging_queued_client_batch1
-    self_discharging_queued_client.clear_queue()
+def test_batchsize_autoflush(self_discharging_queued_client_batch5):
+    self_discharging_queued_client_batch5.clear_queue()
     sent = 0
-    for i in range(100):
-        self_discharging_queued_client.event(service='test')
-        self_discharging_queued_client.flush()
-        
+    to_send = 100
+    for i in range(to_send):
+        self_discharging_queued_client_batch5.event(service='test', description='{:03d}'.format(i))
         sent += 1
-    assert len(self_discharging_queued_client.queue.events) == 0
-    print len(self_discharging_queued_client.transport), sent
-    assert len(self_discharging_queued_client.transport) == sent
-    self_discharging_queued.client.transport.seek(0)
-    print self_discharging_queued.client.transport.read()
-    assert 1 == 0
+    assert len(self_discharging_queued_client_batch5.queue.events) == 0
+    assert len(self_discharging_queued_client_batch5.transport) == sent
+    assert ('000' == self_discharging_queued_client_batch5.
+                     transport.messages[0].description)
+    assert ('{:03d}'.format(to_send - 1) == 
+            self_discharging_queued_client_batch5.transport.
+            messages[-1].description)
 
 
-# def test_auto_discharge(self_discharging_queued_client):
+# def test_timer_autoflush(self_discharging_queued_client):
 #     self_discharging_queued_client.clear_queue()
 #     time_0 = time.time()
 #     self_discharging_queued_client.event(service='test')
