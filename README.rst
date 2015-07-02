@@ -80,6 +80,7 @@ Requirements
 
 Testing
 -------
+To test, checkout the repository and
 ```bash
 virtualenv venv_test
 source venv_test/bin/activate
