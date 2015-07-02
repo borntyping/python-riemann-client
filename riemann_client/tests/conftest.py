@@ -15,14 +15,19 @@ else:
 class StringTransport(riemann_client.transport.Transport):
     def connect(self):
         self.string = StringIO()
+        self.counter = 0
 
     def send(self, message):
         self.string.write(str(message.SerializeToString()))
+        self.counter += 1
         message.ok = True
         return message
 
     def disconnect(self):
         self.string.close()
+
+    def __len__(self):
+        return self.counter
 
 
 @py.test.fixture
