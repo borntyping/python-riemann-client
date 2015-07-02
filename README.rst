@@ -80,9 +80,8 @@ Requirements
 
 Testing
 -------
-To test, checkout the repository and
-.. code::bash
-  
+To test, checkout the repository and::
+
   virtualenv venv_test
   source venv_test/bin/activate
   pip install pytest
