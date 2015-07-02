@@ -82,6 +82,7 @@ Testing
 -------
 To test, checkout the repository and
 .. code::bash
+  
   virtualenv venv_test
   source venv_test/bin/activate
   pip install pytest
