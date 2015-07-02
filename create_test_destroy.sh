@@ -7,7 +7,7 @@ pip install pytest
 echo 'installing riemann_client'
 pip install -e .
 echo 'running tests'
-py.test
+py.test tests
 echo ''
 echo 'destroying virtualenv'
 rm -fr tests
