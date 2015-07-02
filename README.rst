@@ -78,6 +78,18 @@ Requirements
 * `protobuf`_ (when using Python 2)
 * `protobuf-py3`_ (when using Python 3)
 
+Testing
+-------
+```bash
+virtualenv venv_test
+source venv_test/bin/activate
+pip install pytest
+pip install -e .
+py.test tests
+deactivate
+rm -fr venv_test
+```
+
 Changelog
 ---------
 
