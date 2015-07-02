@@ -6,7 +6,12 @@ buffer objects are provided by the :py:mod:`riemann_client.riemann_pb2` module.
 
 from __future__ import absolute_import
 
+from exceptions import AttributeError
+from exceptions import RuntimeError
 import socket
+from threading import RLock
+from threading import Timer
+import time
 
 import riemann_client.riemann_pb2
 import riemann_client.transport
@@ -200,3 +205,85 @@ class QueuedClient(Client):
     def clear_queue(self):
         """Resets the message/queue to a blank :py:class:`.Msg` object"""
         self.queue = riemann_client.riemann_pb2.Msg()
+
+
+class SelfDischargingQueuedClient(QueuedClient):
+    """A Riemann client using a queue that can be used to batch send events,
+    and a timer to automatically flush its queue to Riemann within a
+    bounded time period.
+    
+    A message object is used as a queue, with the :py:meth:`.send_event` and
+    :py:meth:`.send_events` methods adding new events to the message,
+    :py:meth`.event` and :py:meth`.events` methods adding new events
+     to the queue from dictionaries, and the
+    :py:meth:`.flush` sending the message.
+    """
+    
+    def __init__(self, transport, max_delay=0.5, max_batch_size=100,
+                 stay_connected=False):
+        super(SelfDischargingQueuedClient, self).__init__(transport)
+        self.stay_connected = stay_connected
+        self.max_delay = max_delay
+        self.max_batch_size = max_batch_size
+        self.lock = RLock()
+        self.event_counter = 0
+        self.last_flush = time.time()
+        self.timer = None
+    
+        # start the timer
+        self.start_timer()
+    
+    def connect(self):
+        if not self.is_connected():
+            self.transport.connect()
+    
+    def is_connected(self):
+        try:
+            # this will throw an exception whenever socket isn't connected
+            self.transport.socket.type
+            return True
+        except (AttributeError, RuntimeError, socket.error):
+            return False
+    
+    def event(self, event_dict):
+        self.send_events((self.create_event(event_dict.copy()),))
+    
+    def events(self, event_dicts):
+        self.send_events(self.create_event(evd.copy()) for evd in event_dicts)
+    
+    def send_event(self, event):
+        self.send_events((event,))
+    
+    def send_events(self, events):
+        with self.lock:
+            for event in events:
+                self.queue.events.add().MergeFrom(event)
+                self.event_counter += 1
+                self.check_for_flush()
+    
+    def flush(self):
+        with self.lock:
+            if not self.is_connected():
+                self.connect()
+            super(SelfDischargingQueuedClient, self).flush()
+            self.event_counter = 0
+            if not self.stay_connected:
+                self.disconnect()
+            self.last_flush = time.time()
+        self.start_timer()
+    
+    def check_for_flush(self):
+        if (self.event_counter >= self.max_batch_size or
+            (time.time() - self.last_flush) >= self.max_delay):
+            self.flush()
+        else:
+            print
+    
+    def start_timer(self):
+        if self.timer:
+            self.timer.cancel()
+        self.timer = Timer(self.max_delay, self.check_for_flush)
+        self.timer.start()
+        
+    def stop_timer(self):
+        self.timer.cancel()
