@@ -33,13 +33,13 @@ def self_discharging_queued_client(request, blank_transport):
 
 
 @py.test.fixture
-def self_discharging_queued_client_delay1(request, blank_transport):
+def self_discharging_queued_client_delay(request, blank_transport):
     """A Riemann client using the StringIO transport and 
     SelfDischargingQueuedClient with max_delay=1 and
     max_batch_size=5000"""
     client = riemann_client.client.SelfDischargingQueuedClient(
         transport=blank_transport,
-        max_delay=1,
+        max_delay=0.05,
         max_batch_size=5000,
         stay_connected=True)
     client.transport.connect()
@@ -141,12 +141,14 @@ def test_batchsize_autoflush(self_discharging_queued_client_batch5):
             messages[-1].description)
 
 
-# def test_timer_autoflush(self_discharging_queued_client):
-#     self_discharging_queued_client.clear_queue()
-#     time_0 = time.time()
-#     self_discharging_queued_client.event(service='test')
-#     assert len(self_discharging_queued_client.transport) == 0
-#     assert len(self_discharging_queued_client.queue) == 1
-#     time.sleep(1.05)
-#     assert len(self_discharging_queued_client.transport) == 1
-#     assert len(self_discharging_queued_client.queue) == 0
+def test_timer_autoflush(self_discharging_queued_client_delay):
+    self_discharging_queued_client_delay.clear_queue()
+    time_0 = time.time()
+    self_discharging_queued_client_delay.event(service='test', description='timer_test')
+    assert len(self_discharging_queued_client_delay.transport) == 0
+    assert len(self_discharging_queued_client_delay.queue.events) == 1
+    time.sleep(0.1)
+    assert len(self_discharging_queued_client_delay.transport) == 1
+    assert len(self_discharging_queued_client_delay.queue.events) == 0
+    assert ('timer_test' == self_discharging_queued_client_delay.
+                            transport.messages[0].description)
