@@ -23,7 +23,6 @@ setuptools.setup(
 
     packages=[
         'riemann_client',
-        'riemann_client.tests'
     ],
 
     install_requires=[
