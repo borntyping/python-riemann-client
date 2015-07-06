@@ -213,20 +213,20 @@ class AutoFlushingQueuedClient(QueuedClient):
         - the queue size exceeds :param max_batch_size: or
         - more than :param max_delay: has elapsed since the last flush and the
           queue is non-empty.
-    
-    if :param stay_connected: is False, then the transport will be 
+
+    if :param stay_connected: is False, then the transport will be
     disconnected after each flush and reconnected at the beginning of
     the next flush.
-    
+
     A message object is used as a queue, and the following methods are given:
         - :py:meth:`.send_event` - add a new event to the queue
         - :py:meth:`.send_events` add a tuple of new events to the queue
-        - :py:meth:`.event` - add a new event to the queue from 
+        - :py:meth:`.event` - add a new event to the queue from
            keyword arguments
-        - :py:meth:`.events` - add new events to the queue from dictionaries 
+        - :py:meth:`.events` - add new events to the queue from dictionaries
         - :py:meth:`.flush` - manually force flush the queue to the transport
     """
-    
+
     def __init__(self, transport, max_delay=0.5, max_batch_size=100,
                  stay_connected=True):
         super(AutoFlushingQueuedClient, self).__init__(transport)
@@ -237,15 +237,15 @@ class AutoFlushingQueuedClient(QueuedClient):
         self.event_counter = 0
         self.last_flush = time.time()
         self.timer = None
-    
+
         # start the timer
         self.start_timer()
-    
+
     def connect(self):
         """Connect the transport if it is not already connected."""
         if not self.is_connected():
             self.transport.connect()
-    
+
     def is_connected(self):
         """Check whether the transport is connected."""
         try:
@@ -254,7 +254,7 @@ class AutoFlushingQueuedClient(QueuedClient):
             return True
         except (AttributeError, RuntimeError, socket.error):
             return False
-    
+
     def event(self, **data):
         """Enqueues an event, using keyword arguments to create an Event
 
@@ -263,7 +263,7 @@ class AutoFlushingQueuedClient(QueuedClient):
         :param \*\*data: keyword arguments used for :py:func:`create_event`
         """
         self.send_events((self.create_event(data),))
-    
+
     def events(self, *events):
         """Enqueues multiple events in a single message
 
@@ -273,14 +273,14 @@ class AutoFlushingQueuedClient(QueuedClient):
          :returns: The response message from Riemann
         """
         self.send_events(self.create_event(evd) for evd in events)
-    
+
     def send_event(self, event):
         """Enqueues a single event
 
         :param event: An ``Event`` protocol buffer object
         """
         self.send_events((event,))
-    
+
     def send_events(self, events):
         """Enqueues multiple events
 
@@ -292,11 +292,11 @@ class AutoFlushingQueuedClient(QueuedClient):
                 self.queue.events.add().MergeFrom(event)
                 self.event_counter += 1
                 self.check_for_flush()
-    
+
     def flush(self):
         """Sends the events in the queue to Riemann in a single protobuf
         message
-        
+
         :returns: The response message from Riemann
         """
         with self.lock:
@@ -309,13 +309,13 @@ class AutoFlushingQueuedClient(QueuedClient):
             self.last_flush = time.time()
         self.start_timer()
         return response
-    
+
     def check_for_flush(self):
         """Checks the conditions for flushing the queue"""
-        if (self.event_counter >= self.max_batch_size or
-            (time.time() - self.last_flush) >= self.max_delay):
+        if self.event_counter >= self.max_batch_size or (time.time() - 
+            self.last_flush) >= self.max_delay:
             self.flush()
-    
+
     def start_timer(self):
         """Cycle the timer responsible for periodically flushing the queue"""
         if self.timer:
@@ -323,10 +323,10 @@ class AutoFlushingQueuedClient(QueuedClient):
         self.timer = Timer(self.max_delay, self.check_for_flush)
         self.timer.daemon = True
         self.timer.start()
-        
+
     def stop_timer(self):
         """Stops the current timer
-        
+
         a :py:meth:`.flush` event will reactviate the timer
         """
         self.timer.cancel()

@@ -175,14 +175,14 @@ class BlankTransport(Transport):
     contacting a Riemann server. This is also used by the automated tests in
     ``riemann_client/tests/test_riemann_command.py``.
     """
-    
+
     def __init__(self, *args, **kwargs):
         self.messages = []
-    
+
     def connect(self):
         """Creates a list to hold messages"""
         pass
-        
+
     def send(self, message):
         """Adds a message to the list, returning a fake 'ok' response
 
