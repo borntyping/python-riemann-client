@@ -6,8 +6,6 @@ buffer objects are provided by the :py:mod:`riemann_client.riemann_pb2` module.
 
 from __future__ import absolute_import
 
-from exceptions import AttributeError
-from exceptions import RuntimeError
 import socket
 from threading import RLock
 from threading import Timer
