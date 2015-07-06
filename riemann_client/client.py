@@ -312,8 +312,8 @@ class AutoFlushingQueuedClient(QueuedClient):
 
     def check_for_flush(self):
         """Checks the conditions for flushing the queue"""
-        if self.event_counter >= self.max_batch_size or (time.time() - 
-            self.last_flush) >= self.max_delay:
+        if self.event_counter >= self.max_batch_size or (time.time() -
+        self.last_flush) >= self.max_delay:
             self.flush()
 
     def start_timer(self):
