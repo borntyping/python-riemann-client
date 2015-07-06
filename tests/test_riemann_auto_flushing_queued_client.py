@@ -134,13 +134,13 @@ def test_batchsize_autoflush(auto_flushing_queued_client_batch5):
     to_send = 100
     for i in range(to_send):
         auto_flushing_queued_client_batch5.event(
-                service='test', description='{:03d}'.format(i))
+                service='test', description='{0:03d}'.format(i))
         sent += 1
     assert len(auto_flushing_queued_client_batch5.queue.events) == 0
     assert len(auto_flushing_queued_client_batch5.transport) == sent
     assert ('000' == auto_flushing_queued_client_batch5.
                      transport.messages[0].description)
-    assert ('{:03d}'.format(to_send - 1) == 
+    assert ('{0:03d}'.format(to_send - 1) == 
             auto_flushing_queued_client_batch5.transport.
             messages[-1].description)
 
