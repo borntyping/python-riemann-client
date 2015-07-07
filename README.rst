@@ -101,6 +101,11 @@ Cleaning up::
 Changelog
 ---------
 
+Version 6.0.3
+^^^^^^^^^^^^^
+
+* ``riemann_client.client.AutoFlushingQueuedClient`` added.
+
 Version 6.0.0
 ^^^^^^^^^^^^^
 
