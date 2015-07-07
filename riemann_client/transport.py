@@ -176,20 +176,27 @@ class BlankTransport(Transport):
     ``riemann_client/tests/test_riemann_command.py``.
     """
 
+    def __init__(self, *args, **kwargs):
+        self.messages = []
+
     def connect(self):
         """Creates a list to hold messages"""
-        self.messages = []
+        pass
 
     def send(self, message):
         """Adds a message to the list, returning a fake 'ok' response
 
         :returns: A response message with ``ok = True``
         """
-        self.messages.append(message)
+        for event in message.events:
+            self.messages.append(event)
         reply = riemann_client.riemann_pb2.Msg()
         reply.ok = True
         return reply
 
     def disconnect(self):
         """Clears the list of messages"""
-        del self.messages
+        pass
+
+    def __len__(self):
+        return len(self.messages)

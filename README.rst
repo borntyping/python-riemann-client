@@ -78,6 +78,26 @@ Requirements
 * `protobuf`_ (when using Python 2)
 * `protobuf-py3`_ (when using Python 3)
 
+Testing (Linux/OSX)
+-------
+To test, clone the repository, then prepare a virtualenv::
+
+  virtualenv venv_test
+  source venv_test/bin/activate
+  pip install pytest
+  pip install -e .
+
+Running the tests::
+
+  py.test tests
+
+
+Cleaning up::
+
+  deactivate
+  rm -fr venv_test
+
+
 Changelog
 ---------
 
