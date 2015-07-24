@@ -226,7 +226,7 @@ class AutoFlushingQueuedClient(QueuedClient):
     """
 
     def __init__(self, transport, max_delay=0.5, max_batch_size=100,
-                 stay_connected=True):
+                 stay_connected=False):
         super(AutoFlushingQueuedClient, self).__init__(transport)
         self.stay_connected = stay_connected
         self.max_delay = max_delay
