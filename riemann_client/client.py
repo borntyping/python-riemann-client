@@ -6,6 +6,7 @@ buffer objects are provided by the :py:mod:`riemann_client.riemann_pb2` module.
 
 from __future__ import absolute_import
 
+import logging
 import socket
 from threading import RLock
 from threading import Timer
@@ -300,10 +301,22 @@ class AutoFlushingQueuedClient(QueuedClient):
         with self.lock:
             if not self.is_connected():
                 self.connect()
-            response = super(AutoFlushingQueuedClient, self).flush()
+            try:
+                response = super(AutoFlushingQueuedClient, self).flush()
+            except socket.error:
+                # log and retry
+                logging.warn("Socket error while flushing. Attempting reconnect and retry...")
+                try:
+                    self.transport.disconnect()
+                    self.connect()
+                    response = super(AutoFlushingQueuedClient, self).flush()
+                except:
+                    logging.error("Socket error when flushing #2. Batch discarded.")
+                    logging.exception()
+                    self.transport.disconnect()
             self.event_counter = 0
             if not self.stay_connected:
-                self.disconnect()
+                self.transport.disconnect()
             self.last_flush = time.time()
         self.start_timer()
         return response
