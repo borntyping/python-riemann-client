@@ -221,6 +221,8 @@ if RLock and Timer:  # noqa
         if :param stay_connected: is False, then the transport will be
         disconnected after each flush and reconnected at the beginning of
         the next flush.
+        if :param clear_on_fail: is True, then the client will discard its
+        buffer after the second retry in the event of a socket error.
 
         A message object is used as a queue, and the following methods are
         given:
@@ -235,9 +237,10 @@ if RLock and Timer:  # noqa
         """
 
         def __init__(self, transport, max_delay=0.5, max_batch_size=100,
-                     stay_connected=False):
+                     stay_connected=False, clear_on_fail=False):
             super(AutoFlushingQueuedClient, self).__init__(transport)
             self.stay_connected = stay_connected
+            self.clear_on_fail = clear_on_fail
             self.max_delay = max_delay
             self.max_batch_size = max_batch_size
             self.lock = RLock()
@@ -319,7 +322,8 @@ if RLock and Timer:  # noqa
                                       "#2. Batch discarded.")
                         logging.exception()
                         self.transport.disconnect()
-                        self.clear_queue()
+                        if self.clear_on_fail:
+                            self.clear_queue()
                 self.event_counter = 0
                 if not self.stay_connected:
                     self.transport.disconnect()
