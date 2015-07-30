@@ -96,13 +96,13 @@ def test_simple_queue_length(auto_flushing_queued_client, using_simple_queue):
 
 def test_simple_queue_event_not_sent(auto_flushing_queued_client,
                                      using_simple_queue):
-    assert len(auto_flushing_queued_client.transport.messages) == 0
+    assert len(auto_flushing_queued_client.transport.events) == 0
 
 
 def test_simple_queue_event_sent(auto_flushing_queued_client,
                                  using_simple_queue):
     auto_flushing_queued_client.flush()
-    assert len(auto_flushing_queued_client.transport.messages) == 1
+    assert len(auto_flushing_queued_client.transport.events) == 1
 
 
 def test_deciqueue_length(auto_flushing_queued_client, large_queue):
@@ -115,7 +115,7 @@ def test_deciqueue_output(auto_flushing_queued_client, large_queue):
     # protobuf flush, so we can find them in messages[0]
     for idx, description in enumerate(large_queue):
         assert (description == auto_flushing_queued_client.
-                transport.messages[idx].description)
+                transport.events[idx].description)
 
 
 def test_deciqueue_flush(auto_flushing_queued_client, large_queue):
@@ -139,10 +139,10 @@ def test_batchsize_autoflush(auto_flushing_queued_client_batch5):
     assert len(auto_flushing_queued_client_batch5.queue.events) == 0
     assert len(auto_flushing_queued_client_batch5.transport) == sent
     assert ('000' == auto_flushing_queued_client_batch5.
-            transport.messages[0].description)
+            transport.events[0].description)
     assert ('{0:03d}'.format(to_send - 1) ==
             auto_flushing_queued_client_batch5.transport.
-            messages[-1].description)
+            events[-1].description)
 
 
 def test_timer_autoflush(auto_flushing_queued_client_delay):
@@ -155,4 +155,4 @@ def test_timer_autoflush(auto_flushing_queued_client_delay):
     assert len(auto_flushing_queued_client_delay.transport) == 1
     assert len(auto_flushing_queued_client_delay.queue.events) == 0
     assert ('timer_test' == auto_flushing_queued_client_delay.
-            transport.messages[0].description)
+            transport.events[0].description)

@@ -169,7 +169,7 @@ class TLSTransport(TCPTransport):
 
 
 class BlankTransport(Transport):
-    """A transport that collects messages in a list, and has no connection
+    """A transport that collects events in a list, and has no connection
 
     Used by ``--transport none``, which is useful for testing commands without
     contacting a Riemann server. This is also used by the automated tests in
@@ -177,7 +177,7 @@ class BlankTransport(Transport):
     """
 
     def __init__(self, *args, **kwargs):
-        self.messages = []
+        self.events = []
 
     def connect(self):
         """Creates a list to hold messages"""
@@ -189,7 +189,7 @@ class BlankTransport(Transport):
         :returns: A response message with ``ok = True``
         """
         for event in message.events:
-            self.messages.append(event)
+            self.events.append(event)
         reply = riemann_client.riemann_pb2.Msg()
         reply.ok = True
         return reply
@@ -199,4 +199,4 @@ class BlankTransport(Transport):
         pass
 
     def __len__(self):
-        return len(self.messages)
+        return len(self.events)
