@@ -305,13 +305,15 @@ class AutoFlushingQueuedClient(QueuedClient):
                 response = super(AutoFlushingQueuedClient, self).flush()
             except socket.error:
                 # log and retry
-                logging.warn("Socket error while flushing. Attempting reconnect and retry...")
+                logging.warn("Socket error while flushing."
+                             "Attempting reconnect and retry...")
                 try:
                     self.transport.disconnect()
                     self.connect()
                     response = super(AutoFlushingQueuedClient, self).flush()
                 except:
-                    logging.error("Socket error when flushing #2. Batch discarded.")
+                    logging.error("Socket error when flushing"
+                                  "#2. Batch discarded.")
                     logging.exception()
                     self.transport.disconnect()
                     self.clear_queue()
