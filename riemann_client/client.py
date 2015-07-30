@@ -11,7 +11,7 @@ import socket
 try:
     from threading import RLock
     from threading import Timer
-except:
+except ImportError:
     RLock = None
     Timer = None
 import time
