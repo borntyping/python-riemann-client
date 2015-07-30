@@ -314,6 +314,7 @@ class AutoFlushingQueuedClient(QueuedClient):
                     logging.error("Socket error when flushing #2. Batch discarded.")
                     logging.exception()
                     self.transport.disconnect()
+                    self.clear_queue()
             self.event_counter = 0
             if not self.stay_connected:
                 self.transport.disconnect()
