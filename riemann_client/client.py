@@ -273,13 +273,6 @@ class AutoFlushingQueuedClient(QueuedClient):
         """
         self.send_events(self.create_event(evd) for evd in events)
 
-    def send_event(self, event):
-        """Enqueues a single event
-
-        :param event: An ``Event`` protocol buffer object
-        """
-        self.send_events((event,))
-
     def send_events(self, events):
         """Enqueues multiple events
 
