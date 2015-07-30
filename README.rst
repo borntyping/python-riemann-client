@@ -101,7 +101,12 @@ Cleaning up::
 Changelog
 ---------
 
-Version 6.0.3
+Version 6.1.1
+^^^^^^^^^^^^^
+
+* Fixed socket error handling in ``riemann_client.client.AutoFlushingQueuedClient``.
+
+Version 6.1.0
 ^^^^^^^^^^^^^
 
 * ``riemann_client.client.AutoFlushingQueuedClient`` added.
