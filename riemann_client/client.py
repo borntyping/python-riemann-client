@@ -8,8 +8,12 @@ from __future__ import absolute_import
 
 import logging
 import socket
-from threading import RLock
-from threading import Timer
+try:
+    from threading import RLock
+    from threading import Timer
+except:
+    RLock = None
+    Timer = None
 import time
 
 import riemann_client.riemann_pb2
@@ -206,134 +210,141 @@ class QueuedClient(Client):
         self.queue = riemann_client.riemann_pb2.Msg()
 
 
-class AutoFlushingQueuedClient(QueuedClient):
-    """A Riemann client using a queue and a timer that will automatically
-    flush its contents if either:
-        - the queue size exceeds :param max_batch_size: or
-        - more than :param max_delay: has elapsed since the last flush and the
-          queue is non-empty.
+if RLock and Timer:  # noqa
+    class AutoFlushingQueuedClient(QueuedClient):
+        """A Riemann client using a queue and a timer that will automatically
+        flush its contents if either:
+            - the queue size exceeds :param max_batch_size: or
+            - more than :param max_delay: has elapsed since the last flush and
+             the queue is non-empty.
 
-    if :param stay_connected: is False, then the transport will be
-    disconnected after each flush and reconnected at the beginning of
-    the next flush.
+        if :param stay_connected: is False, then the transport will be
+        disconnected after each flush and reconnected at the beginning of
+        the next flush.
 
-    A message object is used as a queue, and the following methods are given:
-        - :py:meth:`.send_event` - add a new event to the queue
-        - :py:meth:`.send_events` add a tuple of new events to the queue
-        - :py:meth:`.event` - add a new event to the queue from
-           keyword arguments
-        - :py:meth:`.events` - add new events to the queue from dictionaries
-        - :py:meth:`.flush` - manually force flush the queue to the transport
-    """
-
-    def __init__(self, transport, max_delay=0.5, max_batch_size=100,
-                 stay_connected=False):
-        super(AutoFlushingQueuedClient, self).__init__(transport)
-        self.stay_connected = stay_connected
-        self.max_delay = max_delay
-        self.max_batch_size = max_batch_size
-        self.lock = RLock()
-        self.event_counter = 0
-        self.last_flush = time.time()
-        self.timer = None
-
-        # start the timer
-        self.start_timer()
-
-    def connect(self):
-        """Connect the transport if it is not already connected."""
-        if not self.is_connected():
-            self.transport.connect()
-
-    def is_connected(self):
-        """Check whether the transport is connected."""
-        try:
-            # this will throw an exception whenever socket isn't connected
-            self.transport.socket.type
-            return True
-        except (AttributeError, RuntimeError, socket.error):
-            return False
-
-    def event(self, **data):
-        """Enqueues an event, using keyword arguments to create an Event
-
-        >>> client.event(service='riemann-client', state='awesome')
-
-        :param \*\*data: keyword arguments used for :py:func:`create_event`
+        A message object is used as a queue, and the following methods are
+        given:
+            - :py:meth:`.send_event` - add a new event to the queue
+            - :py:meth:`.send_events` add a tuple of new events to the queue
+            - :py:meth:`.event` - add a new event to the queue from
+               keyword arguments
+            - :py:meth:`.events` - add new events to the queue from
+               dictionaries
+            - :py:meth:`.flush` - manually force flush the queue to the
+               transport
         """
-        self.send_events((self.create_event(data),))
 
-    def events(self, *events):
-        """Enqueues multiple events in a single message
-
-        >>> client.events({'service': 'riemann-client', 'state': 'awesome'})
-
-         :param \*events: event dictionaries for :py:func:`create_event`
-         :returns: The response message from Riemann
-        """
-        self.send_events(self.create_event(evd) for evd in events)
-
-    def send_events(self, events):
-        """Enqueues multiple events
-
-        :param events: A list or iterable of ``Event`` objects
-        :returns: The response message from Riemann
-        """
-        with self.lock:
-            for event in events:
-                self.queue.events.add().MergeFrom(event)
-                self.event_counter += 1
-                self.check_for_flush()
-
-    def flush(self):
-        """Sends the events in the queue to Riemann in a single protobuf
-        message
-
-        :returns: The response message from Riemann
-        """
-        with self.lock:
-            if not self.is_connected():
-                self.connect()
-            try:
-                response = super(AutoFlushingQueuedClient, self).flush()
-            except socket.error:
-                # log and retry
-                logging.warn("Socket error while flushing."
-                             "Attempting reconnect and retry...")
-                try:
-                    self.transport.disconnect()
-                    self.connect()
-                    response = super(AutoFlushingQueuedClient, self).flush()
-                except:
-                    logging.error("Socket error when flushing"
-                                  "#2. Batch discarded.")
-                    logging.exception()
-                    self.transport.disconnect()
-                    self.clear_queue()
+        def __init__(self, transport, max_delay=0.5, max_batch_size=100,
+                     stay_connected=False):
+            super(AutoFlushingQueuedClient, self).__init__(transport)
+            self.stay_connected = stay_connected
+            self.max_delay = max_delay
+            self.max_batch_size = max_batch_size
+            self.lock = RLock()
             self.event_counter = 0
-            if not self.stay_connected:
-                self.transport.disconnect()
             self.last_flush = time.time()
-        self.start_timer()
-        return response
+            self.timer = None
 
-    def check_for_flush(self):
-        """Checks the conditions for flushing the queue"""
-        if (self.event_counter >= self.max_batch_size or
-                (time.time() - self.last_flush) >= self.max_delay):
-            self.flush()
+            # start the timer
+            self.start_timer()
 
-    def start_timer(self):
-        """Cycle the timer responsible for periodically flushing the queue"""
-        if self.timer:
+        def connect(self):
+            """Connect the transport if it is not already connected."""
+            if not self.is_connected():
+                self.transport.connect()
+
+        def is_connected(self):
+            """Check whether the transport is connected."""
+            try:
+                # this will throw an exception whenever socket isn't connected
+                self.transport.socket.type
+                return True
+            except (AttributeError, RuntimeError, socket.error):
+                return False
+
+        def event(self, **data):
+            """Enqueues an event, using keyword arguments to create an Event
+
+            >>> client.event(service='riemann-client', state='awesome')
+
+            :param \*\*data: keyword arguments used for :py:func:`create_event`
+            """
+            self.send_events((self.create_event(data),))
+
+        def events(self, *events):
+            """Enqueues multiple events in a single message
+
+            >>> client.events({'service': 'riemann-client',
+            >>>                'state': 'awesome'})
+
+             :param \*events: event dictionaries for :py:func:`create_event`
+             :returns: The response message from Riemann
+            """
+            self.send_events(self.create_event(evd) for evd in events)
+
+        def send_events(self, events):
+            """Enqueues multiple events
+
+            :param events: A list or iterable of ``Event`` objects
+            :returns: The response message from Riemann
+            """
+            with self.lock:
+                for event in events:
+                    self.queue.events.add().MergeFrom(event)
+                    self.event_counter += 1
+                    self.check_for_flush()
+
+        def flush(self):
+            """Sends the events in the queue to Riemann in a single protobuf
+            message
+
+            :returns: The response message from Riemann
+            """
+            with self.lock:
+                if not self.is_connected():
+                    self.connect()
+                try:
+                    response = super(AutoFlushingQueuedClient, self).flush()
+                except socket.error:
+                    # log and retry
+                    logging.warn("Socket error while flushing."
+                                 "Attempting reconnect and retry...")
+                    try:
+                        self.transport.disconnect()
+                        self.connect()
+                        response = (
+                            super(AutoFlushingQueuedClient, self).flush())
+                    except:
+                        logging.error("Socket error when flushing"
+                                      "#2. Batch discarded.")
+                        logging.exception()
+                        self.transport.disconnect()
+                        self.clear_queue()
+                self.event_counter = 0
+                if not self.stay_connected:
+                    self.transport.disconnect()
+                self.last_flush = time.time()
+            self.start_timer()
+            return response
+
+        def check_for_flush(self):
+            """Checks the conditions for flushing the queue"""
+            if (self.event_counter >= self.max_batch_size or
+                    (time.time() - self.last_flush) >= self.max_delay):
+                self.flush()
+
+        def start_timer(self):
+            """Cycle the timer responsible for periodically flushing the queue
+            """
+            if self.timer:
+                self.timer.cancel()
+            self.timer = Timer(self.max_delay, self.check_for_flush)
+            self.timer.daemon = True
+            self.timer.start()
+
+        def stop_timer(self):
+            """Stops the current timer
+
+            a :py:meth:`.flush` event will reactviate the timer
+            """
             self.timer.cancel()
-        self.timer = Timer(self.max_delay, self.check_for_flush)
-        self.timer.daemon = True
-        self.timer.start()
-
-    def stop_timer(self):
-        """Stops the current timer
-
-        a :py:meth:`.flush` event will reactviate the timer
-        """
-        self.timer.cancel()
