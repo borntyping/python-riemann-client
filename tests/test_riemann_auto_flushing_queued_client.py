@@ -84,7 +84,7 @@ def auto_flushing_queued_client_batch5(request, blank_transport):
     def disconnect():
         client.transport.disconnect()
 
-    return client\
+    return client
 
 
 @py.test.fixture
