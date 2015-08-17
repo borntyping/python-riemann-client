@@ -220,14 +220,11 @@ def test_clear_on_fail_false(auto_flushing_queued_client_batch5_broken_f):
     sent = 0
     to_send = 10
     for i in range(to_send):
-        print repr(auto_flushing_queued_client_batch5_broken_f.
-                   queue.SerializeToString())
         auto_flushing_queued_client_batch5_broken_f.event(
             service='test', description='{0:03d}'.format(i))
         sent += 1
     assert (len(auto_flushing_queued_client_batch5_broken_f.queue.events) ==
             sent)
-    assert False
 
 
 def test_clear_on_fail_true(auto_flushing_queued_client_batch5_broken_t):
@@ -235,11 +232,8 @@ def test_clear_on_fail_true(auto_flushing_queued_client_batch5_broken_t):
     sent = 0
     to_send = 10
     for i in range(to_send):
-        print repr(auto_flushing_queued_client_batch5_broken_t.
-                   queue.SerializeToString())
         auto_flushing_queued_client_batch5_broken_t.event(
             service='test', description='{0:03d}'.format(i))
         sent += 1
     assert (len(auto_flushing_queued_client_batch5_broken_t.queue.events) ==
             0)
-    assert False
