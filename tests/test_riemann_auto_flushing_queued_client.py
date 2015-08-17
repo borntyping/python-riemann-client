@@ -29,6 +29,7 @@ class BrokenTransport(riemann_client.transport.Transport):
 def broken_transport():
     return BrokenTransport()
 
+
 @py.test.fixture
 def auto_flushing_queued_client(request, blank_transport):
     """A Riemann client using the StringIO transport and
@@ -92,7 +93,7 @@ def auto_flushing_queued_client_batch5_broken_f(request, broken_transport):
     AutoFlushingQueuedClient with max_delay=300 and
     max_batch_size=5"""
     client = riemann_client.client.AutoFlushingQueuedClient(
-        transport=blank_transport,
+        transport=broken_transport,
         max_delay=300,
         max_batch_size=5,
         stay_connected=True,
@@ -112,7 +113,7 @@ def auto_flushing_queued_client_batch5_broken_t(request, broken_transport):
     AutoFlushingQueuedClient with max_delay=300 and
     max_batch_size=5"""
     client = riemann_client.client.AutoFlushingQueuedClient(
-        transport=blank_transport,
+        transport=broken_transport,
         max_delay=300,
         max_batch_size=5,
         stay_connected=True,
