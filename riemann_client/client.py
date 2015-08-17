@@ -303,6 +303,7 @@ if RLock and Timer:  # noqa
 
             :returns: The response message from Riemann
             """
+            response = None
             with self.lock:
                 if not self.is_connected():
                     self.connect()
@@ -310,7 +311,7 @@ if RLock and Timer:  # noqa
                     response = super(AutoFlushingQueuedClient, self).flush()
                 except socket.error:
                     # log and retry
-                    logging.warn("Socket error while flushing."
+                    logging.warn("Socket error on flushing. "
                                  "Attempting reconnect and retry...")
                     try:
                         self.transport.disconnect()
@@ -318,9 +319,8 @@ if RLock and Timer:  # noqa
                         response = (
                             super(AutoFlushingQueuedClient, self).flush())
                     except:
-                        logging.error("Socket error when flushing"
-                                      "#2. Batch discarded.")
-                        logging.exception()
+                        logging.error("Socket error on flushing "
+                                      "second attempt. Batch discarded.")
                         self.transport.disconnect()
                         if self.clear_on_fail:
                             self.clear_queue()
