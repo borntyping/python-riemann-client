@@ -20,6 +20,9 @@ import riemann_client.riemann_pb2
 import riemann_client.transport
 
 
+logger = logging.getLogger(__name__)
+
+
 class Client(object):
     """A client for sending events and querying a Riemann server.
 
@@ -311,16 +314,16 @@ if RLock and Timer:  # noqa
                     response = super(AutoFlushingQueuedClient, self).flush()
                 except socket.error:
                     # log and retry
-                    logging.warn("Socket error on flushing. "
-                                 "Attempting reconnect and retry...")
+                    logger.warn("Socket error on flushing. "
+                                "Attempting reconnect and retry...")
                     try:
                         self.transport.disconnect()
                         self.connect()
                         response = (
                             super(AutoFlushingQueuedClient, self).flush())
                     except:
-                        logging.error("Socket error on flushing "
-                                      "second attempt. Batch discarded.")
+                        logger.warn("Socket error on flushing "
+                                    "second attempt. Batch discarded.")
                         self.transport.disconnect()
                         if self.clear_on_fail:
                             self.clear_queue()
