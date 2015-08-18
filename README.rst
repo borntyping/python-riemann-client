@@ -80,9 +80,12 @@ Requirements
 
 Testing (Linux/OSX)
 -------
-Test your code with [tox](https://tox.readthedocs.org/en/latest/):
+
+Testing is done with `tox`_::
 
     tox
+
+.. _tox: https://tox.readthedocs.org/en/latest/
 
 Changelog
 ---------
