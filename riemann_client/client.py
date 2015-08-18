@@ -7,6 +7,14 @@ buffer objects are provided by the :py:mod:`riemann_client.riemann_pb2` module.
 from __future__ import absolute_import
 
 import logging
+try:
+    from logging import NullHandler
+except ImportError:
+    # Create a NullHandler class in logging for python 2.6
+    class NullHandler(logging.Handler):
+        def emit(self, record):
+            pass
+
 import socket
 try:
     from threading import RLock
@@ -21,6 +29,7 @@ import riemann_client.transport
 
 
 logger = logging.getLogger(__name__)
+logger.addHandler(NullHandler())
 
 
 class Client(object):
