@@ -78,8 +78,27 @@ Requirements
 * `protobuf`_ (when using Python 2)
 * `protobuf-py3`_ (when using Python 3)
 
+Testing (Linux/OSX)
+-------
+
+Testing is done with `tox`_::
+
+    tox
+
+.. _tox: https://tox.readthedocs.org/en/latest/
+
 Changelog
 ---------
+
+Version 6.1.1
+^^^^^^^^^^^^^
+
+* Fixed socket error handling in ``riemann_client.client.AutoFlushingQueuedClient``.
+
+Version 6.1.0
+^^^^^^^^^^^^^
+
+* ``riemann_client.client.AutoFlushingQueuedClient`` added.
 
 Version 6.0.0
 ^^^^^^^^^^^^^
