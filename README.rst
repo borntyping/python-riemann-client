@@ -80,23 +80,12 @@ Requirements
 
 Testing (Linux/OSX)
 -------
-To test, clone the repository, then prepare a virtualenv::
 
-  virtualenv venv_test
-  source venv_test/bin/activate
-  pip install pytest
-  pip install -e .
+Testing is done with `tox`_::
 
-Running the tests::
+    tox
 
-  py.test tests
-
-
-Cleaning up::
-
-  deactivate
-  rm -fr venv_test
-
+.. _tox: https://tox.readthedocs.org/en/latest/
 
 Changelog
 ---------
