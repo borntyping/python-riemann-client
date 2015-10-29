@@ -35,7 +35,7 @@ class Pair(click.ParamType):
         return key.strip(), value.strip()
 
 
-def echo(data):
+def echo_event(data):
     """Echo a json dump of an object using click"""
     return click.echo(json.dumps(data, sort_keys=True, indent=2))
 
@@ -100,9 +100,11 @@ def main(ctx, host, port, transport_type, timeout, ca_certs):
               help="Event attribute (key=value, multiple)")
 @click.option('-m', '--metric', '--metric_f', type=click.FLOAT,
               help="Event metric (uses metric_f)")
+@click.option('--echo/--no-echo', default=True,
+              help="Echo event object after sending")
 @click.pass_obj
 def send(transport, time, state, host, description, service, tag, attribute,
-         ttl, metric_f):
+         ttl, metric_f, echo):
     """Send a single event to Riemann"""
     client = CommandLineClient(transport)
     event = client.create_event({
@@ -119,8 +121,8 @@ def send(transport, time, state, host, description, service, tag, attribute,
 
     with client:
         client.send_event(event)
-
-    echo(client.create_dict(event))
+    if echo:
+        echo_event(client.create_dict(event))
 
 
 @main.command()
@@ -129,4 +131,4 @@ def send(transport, time, state, host, description, service, tag, attribute,
 def query(transport, query):
     """Query the Riemann server"""
     with CommandLineClient(transport) as client:
-        echo(client.query(query))
+        echo_event(client.query(query))
