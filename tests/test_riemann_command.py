@@ -74,5 +74,20 @@ def test_send_short():
     ], POPULATED_MESSAGE)
 
 
+def test_send_noecho():
+    assert_output_eq([
+        'send',
+        '--attribute', 'key=value',
+        '--description', 'description',
+        '--metric_f', '11.1',
+        '--service', 'service',
+        '--state', 'state',
+        '--tag', 'tag',
+        '--time', '1408030991',
+        '--ttl', '120',
+        '--no-echo'
+    ], '')
+
+
 def test_query():
     assert_output_eq(['query', 'true'], '[]')
