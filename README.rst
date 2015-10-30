@@ -89,6 +89,15 @@ Testing is done with `tox`_::
 
 Changelog
 ---------
+Version 6.1.3
+^^^^^^^^^^^^^
+
+* Added ``--echo/--no-echo`` option to the CLI.
+
+Version 6.1.2
+^^^^^^^^^^^^^
+
+* Fixed tests inclusion in tarball.
 
 Version 6.1.1
 ^^^^^^^^^^^^^
@@ -105,7 +114,7 @@ Version 6.0.0
 
 * ``riemann_client.client.Client.create_dict`` only returns event fields that
   are set on the Protocol Buffers ``Event`` object
-* ``riemann-client send ...``` only outputs fields that were set on the message
+* ``riemann-client send ...`` only outputs fields that were set on the message
 
 Version 5.1.0
 ^^^^^^^^^^^^^
