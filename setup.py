@@ -26,7 +26,7 @@ setuptools.setup(
     ],
 
     install_requires=[
-        'click>=3.1,<4.0',
+        'click>=3.1',
         protobuf
     ],
 
