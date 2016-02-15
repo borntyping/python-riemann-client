@@ -1,4 +1,5 @@
 *.py[cod]
+.cache
 
 # C extensions
 *.so
@@ -37,3 +38,4 @@ nosetests.xml
 
 # Sphinx documentation
 docs/_build/
+

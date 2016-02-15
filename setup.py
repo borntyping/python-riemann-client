@@ -5,9 +5,9 @@ import sys
 import setuptools
 
 if sys.version_info >= (3,):
-    protobuf = 'protobuf-py3>=2.5.1,<3.0.0'
+    protobuf = 'protobuf>=3.0.0b2,<4.0.0'
 else:
-    protobuf = 'protobuf>=2.3.0,<3.0.0'
+    protobuf = 'protobuf>=2.3.0,<4.0.0'
 
 setuptools.setup(
     name='riemann-client',
@@ -52,8 +52,8 @@ setuptools.setup(
         'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
         'Topic :: Software Development :: Libraries',
         'Topic :: System :: Monitoring',
         'Topic :: System :: Networking',

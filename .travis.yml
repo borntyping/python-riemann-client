@@ -4,10 +4,10 @@ env:
   - TOXENV=py26-lint
   - TOXENV=py27-test
   - TOXENV=py27-lint
-  - TOXENV=py33-test
-  - TOXENV=py33-lint
   - TOXENV=py34-test
   - TOXENV=py34-lint
+  - TOXENV=py35-test
+  - TOXENV=py35-lint
   - TOXENV=docs
 install:
   - pip install tox
