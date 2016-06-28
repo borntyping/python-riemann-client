@@ -9,7 +9,7 @@ import socket
 import ssl
 import struct
 
-import riemann_client.riemann_pb2
+from . import riemann_pb2
 
 
 # Default arguments
@@ -138,7 +138,7 @@ class TCPTransport(SocketTransport):
         self.socket.sendall(struct.pack('!I', len(message)) + message)
 
         length = struct.unpack('!I', self.socket.recv(4))[0]
-        response = riemann_client.riemann_pb2.Msg()
+        response = riemann_pb2.Msg()
         response.ParseFromString(socket_recvall(self.socket, length))
 
         if not response.ok:
@@ -190,7 +190,7 @@ class BlankTransport(Transport):
         """
         for event in message.events:
             self.events.append(event)
-        reply = riemann_client.riemann_pb2.Msg()
+        reply = riemann_pb2.Msg()
         reply.ok = True
         return reply
 
@@ -200,3 +200,9 @@ class BlankTransport(Transport):
 
     def __len__(self):
         return len(self.events)
+
+
+__all__ = (
+    'RiemannError', 'SocketTransport', 'UDPTransport',
+    'TCPTransport', 'TLSTransport', 'BlankTransport',
+)
