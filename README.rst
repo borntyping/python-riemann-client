@@ -28,8 +28,8 @@ Usage
 
 As a command line tool::
 
-    riemann-client [--host HOST] [--port PORT] send [-s SERVICE] [-S STATE] [-m METRIC] [...]
-    riemann-client [--host HOST] [--port PORT] query QUERY
+  riemann-client [--host HOST] [--port PORT] send [-s SERVICE] [-S STATE] [-m METRIC] [...]
+  riemann-client [--host HOST] [--port PORT] query QUERY
 
 The host and port used by the command line tool can also be set with the
 ``RIEMANN_HOST`` and ``RIEMANN_PORT`` environment variables. By default,
@@ -37,22 +37,22 @@ The host and port used by the command line tool can also be set with the
 
 As a library::
 
-    import riemann_client.client
+  import riemann_client.client
 
-    with riemann_client.client.Client() as client:
-        client.event(service="riemann-client", state="awesome")
-        client.query("service = 'riemann-client'")
+  with riemann_client.client.Client() as client:
+      client.event(service="riemann-client", state="awesome")
+      client.query("service = 'riemann-client'")
 
 A more detailed example, using both a non-default transport and a queued
 client::
 
-    from riemann_client.transport import TCPTransport
-    from riemann_client.client import QueuedClient
+  from riemann_client.transport import TCPTransport
+  from riemann_client.client import QueuedClient
 
-    with QueuedClient(TCPTransport("localhost", 5555)) as client:
-        client.event(service="one", metric_f=0.1)
-        client.event(service="two", metric_f=0.2)
-        client.flush()
+  with QueuedClient(TCPTransport("localhost", 5555)) as client:
+      client.event(service="one", metric_f=0.1)
+      client.event(service="two", metric_f=0.2)
+      client.flush()
 
 The ``QueuedClient`` class modifies the ``event()`` method to add events to a
 queue instead of immediately sending them, and adds the ``flush()`` method to
@@ -64,7 +64,7 @@ Installation
 ``riemann-client`` requires Python 2.6 or above, and can be installed with
 ``pip install riemann-client``. It will use Google's `protobuf`_ library when
 running under Python 2, and `GreatFruitOmsk`_'s `protobuf-py3`_ fork when
-running under Python 3. Python 3 support is experimental and is likley to use
+running under Python 3. Python 3 support is experimental and is likely to use
 Google's `protobuf` once it supports Python 3 fully.
 
 .. _protobuf: https://pypi.python.org/pypi/protobuf
@@ -79,7 +79,7 @@ Requirements
 * `protobuf-py3`_ (when using Python 3)
 
 Testing (Linux/OSX)
--------
+-------------------
 
 Testing is done with `tox`_::
 
