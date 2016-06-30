@@ -15,5 +15,5 @@ try:
 except ImportError:
     pass
 
-__version__ = '6.1.3'
+__version__ = '6.4.0'
 __author__ = 'Sam Clements <sam.clements@datasift.com>'
