@@ -153,7 +153,7 @@ class Client(object):
             elif descriptor.name == 'attributes':
                 value = dict(((a.key, a.value) for a in value))
             elif isinstance(value, float):
-                value = round(value, 2)
+                value = round(value, 1)
             data[descriptor.name] = value
 
         return data

@@ -41,7 +41,7 @@ POPULATED_MESSAGE = u"""{
     "tag"
   ],
   "time": 1408030991,
-  "ttl": 120
+  "ttl": 120.0
 }
 """ % socket.gethostname()
 
