@@ -1,7 +1,6 @@
 language: python
 env:
   - TOXENV=py26-test
-  - TOXENV=py26-lint
   - TOXENV=py27-test
   - TOXENV=py27-lint
   - TOXENV=py34-test
