@@ -5,7 +5,7 @@ import sys
 import setuptools
 
 if sys.version_info >= (3,):
-    protobuf = 'protobuf>=3.0.0b2,<4.0.0'
+    protobuf = 'protobuf>=3.2.0,<4.0.0'
 else:
     protobuf = 'protobuf>=2.3.0,<4.0.0'
 
