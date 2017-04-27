@@ -94,7 +94,7 @@ def main(ctx, host, port, transport_type, timeout, ca_certs):
               help="Event description")
 @click.option('-t', '--tag', type=click.STRING, multiple=True,
               help="Event tag (multiple)")
-@click.option('-l', '--ttl', type=click.INT,
+@click.option('-l', '--ttl', type=click.FLOAT,
               help="Event time to live in seconds")
 @click.option('-a', '--attr', '--attribute', type=Pair(), multiple=True,
               help="Event attribute (key=value, multiple)")
