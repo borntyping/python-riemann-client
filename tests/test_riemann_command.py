@@ -34,14 +34,14 @@ POPULATED_MESSAGE = u"""{
   },
   "description": "description",
   "host": "%s",
-  "metric_f": 11.1,
+  "metric_f": 11.5,
   "service": "service",
   "state": "state",
   "tags": [
     "tag"
   ],
   "time": 1408030991,
-  "ttl": 120.0
+  "ttl": 120.5
 }
 """ % socket.gethostname()
 
@@ -51,12 +51,12 @@ def test_send():
         u'send',
         u'--attribute', u'key=value',
         u'--description', u'description',
-        u'--metric_f', u'11.1',
+        u'--metric_f', u'11.5',
         u'--service', u'service',
         u'--state', u'state',
         u'--tag', u'tag',
         u'--time', u'1408030991',
-        u'--ttl', u'120'
+        u'--ttl', u'120.5'
     ], POPULATED_MESSAGE)
 
 
@@ -65,12 +65,12 @@ def test_send_short():
         u'send',
         u'-a', u'key=value',
         u'-d', u'description',
-        u'-m', u'11.1',
+        u'-m', u'11.5',
         u'-s', u'service',
         u'-S', u'state',
         u'-t', u'tag',
         u'-T', u'1408030991',
-        u'-l', u'120'
+        u'-l', u'120.5'
     ], POPULATED_MESSAGE)
 
 
@@ -79,12 +79,12 @@ def test_send_noecho():
         'send',
         '--attribute', 'key=value',
         '--description', 'description',
-        '--metric_f', '11.1',
+        '--metric_f', '11.5',
         '--service', 'service',
         '--state', 'state',
         '--tag', 'tag',
         '--time', '1408030991',
-        '--ttl', '120',
+        '--ttl', '120.5',
         '--no-echo'
     ], '')
 

@@ -26,8 +26,6 @@ import time
 
 import riemann_client.riemann_pb2
 import riemann_client.transport
-import google.protobuf.descriptor
-
 
 logger = logging.getLogger(__name__)
 logger.addHandler(NullHandler())
@@ -153,9 +151,6 @@ class Client(object):
                 value = list(value)
             elif descriptor.name == 'attributes':
                 value = dict(((a.key, a.value) for a in value))
-            elif descriptor.type == \
-                    google.protobuf.descriptor.FieldDescriptor.TYPE_FLOAT:
-                value = round(value, 1)
             data[descriptor.name] = value
 
         return data
