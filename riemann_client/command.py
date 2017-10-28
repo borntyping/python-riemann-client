@@ -53,8 +53,12 @@ def echo_event(data):
               help='Timeout for TCP based connections.')
 @click.option('--ca-certs', '-C', type=click.Path(),
               help='A CA certificate bundle for TLS connections.')
+@click.option('--keyfile', type=click.Path(),
+              help='Private client key for TLS connections.')
+@click.option('--certfile', type=click.Path(),
+              help='Public client certificate for TLS connections.')
 @click.pass_context
-def main(ctx, host, port, transport_type, timeout, ca_certs):
+def main(ctx, host, port, transport_type, timeout, ca_certs, keyfile, certfile):
     """Connects to a Riemann server to send events or query the index
 
     By default, will attempt to contact Riemann on localhost:5555 over TCP. The
@@ -74,7 +78,7 @@ def main(ctx, host, port, transport_type, timeout, ca_certs):
         if ca_certs is None:
             ctx.fail('--ca-certs must be set when using the TLS transport')
         transport = riemann_client.transport.TLSTransport(
-            host, port, timeout, ca_certs)
+            host, port, timeout, ca_certs, keyfile, certfile)
     elif transport_type == 'none':
         transport = riemann_client.transport.BlankTransport()
 
