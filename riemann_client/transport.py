@@ -148,15 +148,20 @@ class TCPTransport(SocketTransport):
 
 
 class TLSTransport(TCPTransport):
-    def __init__(self, host=HOST, port=PORT, timeout=TIMEOUT, ca_certs=None):
+    def __init__(self, host=HOST, port=PORT, timeout=TIMEOUT, ca_certs=None,
+                 keyfile=None, certfile=None):
         """Communicates with Riemann over TCP + TLS
 
         Options are the same as :py:class:`.TCPTransport` unless noted
 
         :param str ca_certs: Path to a CA Cert bundle used to create the socket
+        :param str keyfile:  Path to a client key file
+        :param str certfile: Path to a client certificate file
         """
         super(TLSTransport, self).__init__(host, port, timeout)
         self.ca_certs = ca_certs
+        self.keyfile = keyfile
+        self.certfile = certfile
 
     def connect(self):
         """Connects using :py:meth:`TLSTransport.connect` and wraps with TLS"""
@@ -165,7 +170,9 @@ class TLSTransport(TCPTransport):
             self.socket,
             ssl_version=ssl.PROTOCOL_TLSv1,
             cert_reqs=ssl.CERT_REQUIRED,
-            ca_certs=self.ca_certs)
+            ca_certs=self.ca_certs,
+            keyfile=self.keyfile,
+            certfile=self.certfile)
 
 
 class BlankTransport(Transport):
