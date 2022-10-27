@@ -1,13 +1,13 @@
 from __future__ import absolute_import
 
-import py.test
+import pytest
 
 import riemann_client.client
 import riemann_client.riemann_pb2
 import riemann_client.transport
 
 
-@py.test.fixture
+@pytest.fixture
 def queued_client(request, string_transport):
     """A Riemann client using the StringIO transport and QueuedClient"""
     client = riemann_client.client.QueuedClient(transport=string_transport)
@@ -20,13 +20,13 @@ def queued_client(request, string_transport):
     return client
 
 
-@py.test.fixture
+@pytest.fixture
 def using_simple_queue(queued_client):
     """An event queue with a single event"""
     queued_client.event(service='test')
 
 
-@py.test.fixture
+@pytest.fixture
 def large_queue(queued_client):
     """An event queue with 100 events"""
     items = ['-->{0}<--'.format(i) for i in range(0, 1000)]

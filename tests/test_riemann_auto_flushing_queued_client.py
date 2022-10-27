@@ -1,6 +1,6 @@
 from __future__ import absolute_import
 
-import py.test
+import pytest
 import socket
 import time
 
@@ -9,7 +9,7 @@ import riemann_client.riemann_pb2
 import riemann_client.transport
 
 
-@py.test.fixture
+@pytest.fixture
 def blank_transport():
     return riemann_client.transport.BlankTransport()
 
@@ -25,12 +25,12 @@ class BrokenTransport(riemann_client.transport.Transport):
         raise socket.error(32, '[Errno 32] Broken pipe')
 
 
-@py.test.fixture
+@pytest.fixture
 def broken_transport():
     return BrokenTransport()
 
 
-@py.test.fixture
+@pytest.fixture
 def auto_flushing_queued_client(request, blank_transport):
     """A Riemann client using the StringIO transport and
     AutoFlushingQueuedClient with max_delay=300 and
@@ -49,7 +49,7 @@ def auto_flushing_queued_client(request, blank_transport):
     return client
 
 
-@py.test.fixture
+@pytest.fixture
 def auto_flushing_queued_client_delay(request, blank_transport):
     """A Riemann client using the StringIO transport and
     AutoFlushingQueuedClient with max_delay=1 and
@@ -68,7 +68,7 @@ def auto_flushing_queued_client_delay(request, blank_transport):
     return client
 
 
-@py.test.fixture
+@pytest.fixture
 def auto_flushing_queued_client_batch5(request, blank_transport):
     """A Riemann client using the StringIO transport and
     AutoFlushingQueuedClient with max_delay=300 and
@@ -87,7 +87,7 @@ def auto_flushing_queued_client_batch5(request, blank_transport):
     return client
 
 
-@py.test.fixture
+@pytest.fixture
 def auto_flushing_queued_client_batch5_broken_f(request, broken_transport):
     """A Riemann client using the StringIO transport and
     AutoFlushingQueuedClient with max_delay=300 and
@@ -107,7 +107,7 @@ def auto_flushing_queued_client_batch5_broken_f(request, broken_transport):
     return client
 
 
-@py.test.fixture
+@pytest.fixture
 def auto_flushing_queued_client_batch5_broken_t(request, broken_transport):
     """A Riemann client using the StringIO transport and
     AutoFlushingQueuedClient with max_delay=300 and
@@ -127,13 +127,13 @@ def auto_flushing_queued_client_batch5_broken_t(request, broken_transport):
     return client
 
 
-@py.test.fixture
+@pytest.fixture
 def using_simple_queue(auto_flushing_queued_client):
     """An event queue with a single event"""
     auto_flushing_queued_client.event(service='test')
 
 
-@py.test.fixture
+@pytest.fixture
 def large_queue(auto_flushing_queued_client):
     """An event queue with 100 events"""
     items = ['-->{0}<--'.format(i) for i in range(0, 1000)]

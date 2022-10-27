@@ -4,7 +4,7 @@ import socket
 import sys
 import uuid
 
-import py.test
+import pytest
 
 import riemann_client.client
 import riemann_client.riemann_pb2
@@ -14,7 +14,7 @@ if sys.version_info >= (3,):
     basestring = str
 
 
-@py.test.fixture
+@pytest.fixture
 def client(request, string_transport):
     client = riemann_client.client.Client(transport=string_transport)
     client.transport.connect()
@@ -26,7 +26,7 @@ def client(request, string_transport):
     return client
 
 
-@py.test.fixture
+@pytest.fixture
 def unique():
     return str(uuid.uuid4())
 
@@ -68,7 +68,7 @@ class TestClient(object):
         transport = riemann_client.transport.UDPTransport()
         client = riemann_client.client.Client(transport)
 
-        with py.test.raises(Exception):
+        with pytest.raises(Exception):
             client.query('true')
 
     def test_events(self, client):
@@ -81,7 +81,7 @@ class TestClient(object):
         assert len(message.events) == 2
 
 
-@py.test.fixture
+@pytest.fixture
 def event(unique):
     return riemann_client.client.Client.create_event({
         'host': 'test.example.com',
@@ -104,7 +104,7 @@ class TestCreateEvent(object):
         assert event.attributes[0].value == unique
 
 
-@py.test.fixture
+@pytest.fixture
 def event_as_dict(event):
     return riemann_client.client.Client.create_dict(event)
 

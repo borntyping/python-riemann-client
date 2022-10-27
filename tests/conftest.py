@@ -2,7 +2,7 @@ from __future__ import absolute_import
 
 import sys
 
-import py.test
+import pytest
 
 import riemann_client.transport
 
@@ -25,6 +25,6 @@ class StringTransport(riemann_client.transport.Transport):
         self.string.close()
 
 
-@py.test.fixture
+@pytest.fixture
 def string_transport():
     return StringTransport()

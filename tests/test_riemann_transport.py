@@ -1,6 +1,6 @@
 from __future__ import absolute_import
 
-import py.test
+import pytest
 
 import riemann_client.riemann_pb2
 import riemann_client.transport
@@ -24,13 +24,13 @@ def test_socket_recvall_short():
     assert socket_recvall(FakeSocket(), 5) == b'hello'
 
 
-@py.test.fixture
+@pytest.fixture
 def tcp_transport():
     return riemann_client.transport.TCPTransport()
 
 
 def test_not_yet_connected(tcp_transport):
-    with py.test.raises(RuntimeError):
+    with pytest.raises(RuntimeError):
         tcp_transport.send(riemann_client.riemann_pb2.Msg())
 
 
