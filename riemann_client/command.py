@@ -61,7 +61,16 @@ def echo_event(data):
 @click.option('--certfile', type=click.Path(),
               help='Public client certificate for TLS connections.')
 @click.pass_context
-def main(ctx, host, port, transport_type, timeout, ca_certs, keyfile, certfile):
+def main(
+    ctx,
+    host,
+    port,
+    transport_type,
+    timeout,
+    ca_certs,
+    keyfile,
+    certfile,
+):
     """Connects to a Riemann server to send events or query the index
 
     By default, will attempt to contact Riemann on localhost:5555 over TCP. The
