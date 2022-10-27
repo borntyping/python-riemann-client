@@ -11,7 +11,7 @@ import riemann_client.command
 def run_cli(args):
     args = [u'-T', u'none'] + list(args)
     runner = click.testing.CliRunner()
-    result = runner.invoke(riemann_client.command.main, args)
+    result = runner.invoke(riemann_client.command.main, args, catch_exceptions=False)
     assert result.exit_code == 0
     return result
 
