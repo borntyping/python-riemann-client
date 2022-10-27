@@ -7,20 +7,23 @@ import sys
 
 import click
 
-import riemann_client
-import riemann_client.client
-import riemann_client.transport
+from . import __version__
+from .client import Client
+from .transport import (
+    RiemannError, UDPTransport, TCPTransport,
+    TLSTransport, BlankTransport
+)
 
 __all__ = ['main']
 
 
-class CommandLineClient(riemann_client.client.Client):
+class CommandLineClient(Client):
     """Prints to STDERR when an error message is recived from Riemann"""
 
     def __exit__(self, exc_type, exc_value, traceback):
         super(CommandLineClient, self).__exit__(exc_type, exc_value, traceback)
 
-        if isinstance(exc_type, riemann_client.transport.RiemannError):
+        if isinstance(exc_type, RiemannError):
             click.echo("The server responded with an error: {0}".format(
                 exc_value.message), file=sys.stderr)
             exit(1)
@@ -41,7 +44,7 @@ def echo_event(data):
 
 
 @click.group()
-@click.version_option(version=riemann_client.__version__)
+@click.version_option(version=__version__)
 @click.option('--host', '-H', type=click.STRING, default='localhost',
               envvar='RIEMANN_HOST', help='Riemann server hostname.')
 @click.option('--port', '-P', type=click.INT, default=5555,
@@ -67,16 +70,16 @@ def main(ctx, host, port, transport_type, timeout, ca_certs):
     if transport_type == 'udp':
         if timeout is not None:
             ctx.fail('--timeout cannot be used with the UDP transport')
-        transport = riemann_client.transport.UDPTransport(host, port)
+        transport = UDPTransport(host, port)
     elif transport_type == 'tcp':
-        transport = riemann_client.transport.TCPTransport(host, port, timeout)
+        transport = TCPTransport(host, port, timeout)
     elif transport_type == 'tls':
         if ca_certs is None:
             ctx.fail('--ca-certs must be set when using the TLS transport')
-        transport = riemann_client.transport.TLSTransport(
+        transport = TLSTransport(
             host, port, timeout, ca_certs)
     elif transport_type == 'none':
-        transport = riemann_client.transport.BlankTransport()
+        transport = BlankTransport()
 
     ctx.obj = transport
 

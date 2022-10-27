@@ -24,8 +24,8 @@ except ImportError:
     Timer = None
 import time
 
-import riemann_client.riemann_pb2
-import riemann_client.transport
+from . import riemann_pb2
+from .transport import UDPTransport, TCPTransport
 
 logger = logging.getLogger(__name__)
 logger.addHandler(NullHandler())
@@ -64,7 +64,7 @@ class Client(object):
 
     def __init__(self, transport=None):
         if transport is None:
-            transport = riemann_client.transport.TCPTransport()
+            transport = TCPTransport()
         self.transport = transport
 
     def __enter__(self):
@@ -81,7 +81,7 @@ class Client(object):
         :param dict data: The attributes to be set on the event
         :returns: A protocol buffer ``Event`` object
         """
-        event = riemann_client.riemann_pb2.Event()
+        event = riemann_pb2.Event()
         event.host = socket.gethostname()
         event.tags.extend(data.pop('tags', []))
 
@@ -100,7 +100,7 @@ class Client(object):
         :param events: A list or iterable of ``Event`` objects
         :returns: The response message from Riemann
         """
-        message = riemann_client.riemann_pb2.Msg()
+        message = riemann_pb2.Msg()
         for event in events:
             message.events.add().MergeFrom(event)
         return self.transport.send(message)
@@ -160,7 +160,7 @@ class Client(object):
 
         :returns: The response message from Riemann
         """
-        message = riemann_client.riemann_pb2.Msg()
+        message = riemann_pb2.Msg()
         message.query.string = query
         return self.transport.send(message)
 
@@ -172,7 +172,7 @@ class Client(object):
         :returns: A list of event dictionaries taken from the response
         :raises Exception: if used with a :py:class:`.UDPTransport`
         """
-        if isinstance(self.transport, riemann_client.transport.UDPTransport):
+        if isinstance(self.transport, UDPTransport):
             raise Exception('Cannot query the Riemann server over UDP')
         response = self.send_query(query)
         return [self.create_dict(e) for e in response.events]
@@ -218,7 +218,7 @@ class QueuedClient(Client):
 
     def clear_queue(self):
         """Resets the message/queue to a blank :py:class:`.Msg` object"""
-        self.queue = riemann_client.riemann_pb2.Msg()
+        self.queue = riemann_pb2.Msg()
 
 
 if RLock and Timer:  # noqa
@@ -363,3 +363,6 @@ if RLock and Timer:  # noqa
             a :py:meth:`.flush` event will reactviate the timer
             """
             self.timer.cancel()
+
+
+__all__ = 'Client', 'QueuedClient', 'AutoFlushingQueuedClient'
