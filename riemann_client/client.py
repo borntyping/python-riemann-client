@@ -322,16 +322,16 @@ if RLock and Timer:  # noqa
                     response = super(AutoFlushingQueuedClient, self).flush()
                 except socket.error:
                     # log and retry
-                    logger.warn("Socket error on flushing. "
-                                "Attempting reconnect and retry...")
+                    logger.warning("Socket error on flushing. "
+                                   "Attempting reconnect and retry...")
                     try:
                         self.transport.disconnect()
                         self.connect()
                         response = (
                             super(AutoFlushingQueuedClient, self).flush())
                     except:
-                        logger.warn("Socket error on flushing "
-                                    "second attempt. Batch discarded.")
+                        logger.warning("Socket error on flushing "
+                                       "second attempt. Batch discarded.")
                         self.transport.disconnect()
                         if self.clear_on_fail:
                             self.clear_queue()
