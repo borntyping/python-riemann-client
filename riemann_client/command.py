@@ -96,11 +96,11 @@ def main(ctx, host, port, transport_type, timeout, ca_certs):
               help="Event tag (multiple)")
 @click.option('-l', '--ttl', type=click.FLOAT,
               help="Event time to live in seconds")
-@click.option('-a', '--attr', '--attribute', type=Pair(), multiple=True,
+@click.option('-a', '--attr', '--attribute', 'attribute', type=Pair(), multiple=True,
               help="Event attribute (key=value, multiple)")
-@click.option('-m', '--metric', '--metric_f', type=click.FLOAT,
+@click.option('-m', '--metric', '--metric_f', 'metric_f', type=click.FLOAT,
               help="Event metric (uses metric_f)")
-@click.option('--echo/--no-echo', default=True,
+@click.option('--echo/--no-echo', 'echo', default=True,
               help="Echo event object after sending")
 @click.pass_obj
 def send(transport, time, state, host, description, service, tag, attribute,
@@ -126,7 +126,7 @@ def send(transport, time, state, host, description, service, tag, attribute,
 
 
 @main.command()
-@click.argument('query', 'query')
+@click.argument('query')
 @click.pass_obj
 def query(transport, query):
     """Query the Riemann server"""
