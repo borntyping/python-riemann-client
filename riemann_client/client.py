@@ -118,7 +118,7 @@ class Client(object):
 
         >>> client.events({'service': 'riemann-client', 'state': 'awesome'})
 
-         :param \*events: event dictionaries for :py:func:`create_event`
+         :param events: event dictionaries for :py:func:`create_event`
          :returns: The response message from Riemann
         """
         return self.send_events(self.create_event(e) for e in events)
@@ -128,7 +128,7 @@ class Client(object):
 
         >>> client.event(service='riemann-client', state='awesome')
 
-        :param \*\*data: keyword arguments used for :py:func:`create_event`
+        :param data: keyword arguments used for :py:func:`create_event`
         :returns: The response message from Riemann
         """
         return self.send_event(self.create_event(data))
@@ -281,7 +281,7 @@ if RLock and Timer:  # noqa
 
             >>> client.event(service='riemann-client', state='awesome')
 
-            :param \*\*data: keyword arguments used for :py:func:`create_event`
+            :param data: keyword arguments used for :py:func:`create_event`
             """
             self.send_events((self.create_event(data),))
 
@@ -291,7 +291,7 @@ if RLock and Timer:  # noqa
             >>> client.events({'service': 'riemann-client',
             >>>                'state': 'awesome'})
 
-             :param \*events: event dictionaries for :py:func:`create_event`
+             :param events: event dictionaries for :py:func:`create_event`
              :returns: The response message from Riemann
             """
             self.send_events(self.create_event(evd) for evd in events)
@@ -329,7 +329,7 @@ if RLock and Timer:  # noqa
                         self.connect()
                         response = (
                             super(AutoFlushingQueuedClient, self).flush())
-                    except:
+                    except Exception:
                         logger.warning("Socket error on flushing "
                                        "second attempt. Batch discarded.")
                         self.transport.disconnect()

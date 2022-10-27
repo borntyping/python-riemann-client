@@ -9,11 +9,11 @@ from riemann_client.transport import socket_recvall
 
 
 class FakeSocket(object):
-        def __init__(self):
-            self.data = [b'hello', b'world', b'']
+    def __init__(self):
+        self.data = [b'hello', b'world', b'']
 
-        def recv(self, bufsize):
-            return self.data.pop(0)
+    def recv(self, bufsize):
+        return self.data.pop(0)
 
 
 def test_socket_recvall():

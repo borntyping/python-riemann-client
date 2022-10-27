@@ -11,13 +11,17 @@ import riemann_client.command
 def run_cli(args):
     args = [u'-T', u'none'] + list(args)
     runner = click.testing.CliRunner()
-    result = runner.invoke(riemann_client.command.main, args, catch_exceptions=False)
+    result = runner.invoke(
+        riemann_client.command.main,
+        args,
+        catch_exceptions=False,
+    )
     assert result.exit_code == 0
     return result
 
 
 def strip(string):
-    return re.sub(u'\s+', u'', string)
+    return re.sub(u'\\s+', u'', string)
 
 
 def assert_output_eq(args, expected):
