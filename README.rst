@@ -23,6 +23,10 @@ client that can queue or batch events and then send them in a single message.
 * `Documentation on Read the Docs <http://riemann-client.readthedocs.org/en/latest/>`_
 * `Packages on PyPI <https://pypi.python.org/pypi/riemann-client>`_
 
+**This project is no longer maintained. Please contact me by opening an issue
+on the GitHub project if you'd like to fork this repository and take over the
+``riemann-client`` PyPI package.**
+
 Usage
 -----
 

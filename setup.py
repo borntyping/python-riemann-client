@@ -11,7 +11,7 @@ else:
 
 setuptools.setup(
     name='riemann-client',
-    version='6.6.0',
+    version='7.0.0pre1',
 
     author="Sam Clements",
     author_email="sam.clements@datasift.com",
@@ -44,7 +44,7 @@ setuptools.setup(
     },
 
     classifiers=[
-        'Development Status :: 5 - Production/Stable',
+        'Development Status :: 7 - Inactive',
         'License :: OSI Approved',
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python',
