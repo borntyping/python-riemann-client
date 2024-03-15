@@ -11,7 +11,7 @@ else:
 
 setuptools.setup(
     name='riemann-client',
-    version='7.0.0pre1',
+    version='7.0.0',
 
     author="Sam Clements",
     author_email="sam.clements@datasift.com",
